@@ -66,7 +66,6 @@ public class Main {
 		}
 		Tabla t=new Tabla();
 		t.feltolt();
-		t.oszlopok.get(5).mezok.get(5).ertek = -1;
 		t.print();
 	}//Main függvény vége
 }//Main vége
