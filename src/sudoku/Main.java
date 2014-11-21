@@ -1,8 +1,6 @@
 package sudoku;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -44,12 +42,12 @@ public class Main {
 		FileReader fr;
 		try {
 			
-			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
+			fr = new FileReader("9char.txt");
 			BufferedReader br = new BufferedReader(fr);
 			Random rand= new Random();
 			int sorszam=rand.nextInt(1758);
 			for(int i=0;i<sorszam;i++){
-				//System.out.println(br.readLine());
+				br.readLine();
 			}
 			String szo=br.readLine();
 			System.out.println(szo);
@@ -72,5 +70,5 @@ public class Main {
 		t.ToltPuzzle(t.puzzle);
 		t.makePuzzle(t.puzzle, 9);
 		//System.out.print(t.negyzetek.get(0).mezoim[2][2]);
-	}//Main függvény vége
-}//Main vége
+	}//Main fï¿½ggvï¿½ny vï¿½ge
+}//Main vï¿½ge

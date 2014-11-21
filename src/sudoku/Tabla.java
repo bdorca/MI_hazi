@@ -11,7 +11,7 @@ public class Tabla {
 	}
 	
 	
-	public void makePuzzle(int[] puzzle, int i)
+	public boolean makePuzzle(int[] puzzle, int i)
     {
 		szam++;
 		System.out.println(szam);
@@ -24,14 +24,14 @@ public class Tabla {
                 {
                     System.out.println(this);//print out the completed puzzle
                         puzzle[i]=0;
-                        return;
+                        return true;
                 }
                 else
-                    makePuzzle(puzzle,i+1);//find a number for the next square                          
+                    if(makePuzzle(puzzle,i+1)) return true;//find a number for the next square                          
             }
             puzzle[i]=0;//this try didn't work, delete the evidence 
         }       
-        
+        return false;
     }
     public boolean checkConstraints(int[] puzzle)
     {
