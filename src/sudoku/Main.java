@@ -66,6 +66,10 @@ public class Main {
 		}
 		Tabla t=new Tabla();
 		t.feltolt();
-		t.print();
+		//t.NegyzetesFeltoltes();
+		//t.print();
+		//t.NegyzetPrint();
+		t.makePuzzle(t.puzzle, 0);
+		//System.out.print(t.negyzetek.get(0).mezoim[2][2]);
 	}//Main függvény vége
 }//Main vége
