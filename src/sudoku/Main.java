@@ -65,11 +65,12 @@ public class Main {
 			e.printStackTrace();
 		}
 		Tabla t=new Tabla();
-		t.feltolt();
+		//t.feltolt();
 		//t.NegyzetesFeltoltes();
 		//t.print();
 		//t.NegyzetPrint();
-		t.makePuzzle(t.puzzle, 0);
+		t.ToltPuzzle(t.puzzle);
+		t.makePuzzle(t.puzzle, 9);
 		//System.out.print(t.negyzetek.get(0).mezoim[2][2]);
 	}//Main függvény vége
 }//Main vége
