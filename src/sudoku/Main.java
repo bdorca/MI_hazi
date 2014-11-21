@@ -44,7 +44,8 @@ public class Main {
 		FileReader fr;
 		try {
 			
-			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
+			//fr = new FileReader("C:\\Users\\Legoo\\Desktop\\fï¿½lï¿½v#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
+			fr = new FileReader("9char.txt");
 			BufferedReader br = new BufferedReader(fr);
 			Random rand= new Random();
 			int sorszam=rand.nextInt(1758);
@@ -69,7 +70,12 @@ public class Main {
 		t.ToltPuzzle(t.puzzle);
 		t.makePuzzle(t.puzzle, 0);
 		
-		for(int i = 0; i < 35; i++){ //Az, hogy hány számot távolítsunk el (ha mindig mást generál a két random)
+		int[] tomb=new int[81];
+		for(int i=0;i<81;i++){
+			tomb[i]=t.puzzle[i];
+		}
+		
+		for(int i = 0; i < 40; i++){ //Az, hogy hï¿½ny szï¿½mot tï¿½volï¿½tsunk el (ha mindig mï¿½st generï¿½l a kï¿½t random)
 			Random rand = new Random();
 			int value = rand.nextInt(9);
 			int value_2 = rand.nextInt(9);
@@ -79,6 +85,16 @@ public class Main {
 		System.out.println("\n" + t.toString() + "\n");
 		t.szam = 0;
 		t.makePuzzle(t.puzzle, 0);
+		
+		boolean zsir=true;
+		for(int i=0;i<81;i++){
+			if(tomb[i]!=t.puzzle[i]){
+				zsir=false;
+			}
+		}
+		if(zsir){
+			System.out.println("ZSIR");
+		}
 		
 	}//Main fï¿½ggvï¿½ny vï¿½ge
 }//Main vï¿½ge

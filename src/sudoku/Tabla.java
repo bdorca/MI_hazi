@@ -17,10 +17,10 @@ public class Tabla {
     {
 		szam++;
 		System.out.println(szam);
-		/*if(szam>30000){ 
+		if(szam>50000){ 
 			System.out.println("shit.");
 			return false;
-			} */
+		} 
         for (int x = 1; x< 10 ; x++)
         {
 			if (puzzle[i] != 0) {
