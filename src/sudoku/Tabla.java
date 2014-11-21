@@ -5,7 +5,9 @@ import java.util.Random;
 public class Tabla {
     public int[] puzzle;
     public int szam = 0;
-
+    public char[] chpuzzle;
+    public static char[] karakterkeszlet;
+    
 	public Tabla() {
 	    puzzle = new int[81];
 	}
@@ -22,9 +24,10 @@ public class Tabla {
             {
                 if (i>79)//terminal condition
                 {
-                    System.out.println(this);//print out the completed puzzle
-                        puzzle[i]=0;
-                        return true;
+                	charpuzzle();
+                	System.out.println(this);//print out the completed puzzle
+                    puzzle[i]=0;
+                    return true;
                 }
                 else
                     if(makePuzzle(puzzle,i+1)) return true;//find a number for the next square                          
@@ -232,9 +235,21 @@ public class Tabla {
             }
         }
         
-    return true;
-
+        return true;
     }
+    
+    public void charpuzzle(){
+    	chpuzzle=new char[81];
+    	char[] konvert=new char[9];
+    	for(int i=0;i<9;i++){
+    		konvert[puzzle[i*10]-1]=karakterkeszlet[i];
+    	}
+    	for(int i=0;i<81;i++){
+    		chpuzzle[i]=konvert[puzzle[i]-1];
+    	}
+    }
+    
+    @Override
     public String toString()
     {
         String string= "";

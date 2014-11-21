@@ -38,6 +38,8 @@ import java.util.Random;
                                                                                                                       
 public class Main {
 
+	
+	
 	public static void main(String[] args){
 		FileReader fr;
 		try {
@@ -51,7 +53,7 @@ public class Main {
 			}
 			String szo=br.readLine();
 			System.out.println(szo);
-			Mezo.karakterkeszlet=szo.toCharArray();
+			Tabla.karakterkeszlet=szo.toCharArray();
 			
 			br.close();
 			fr.close();
