@@ -17,24 +17,33 @@ public class Tabla {
     {
 		szam++;
 		System.out.println(szam);
+		/*if(szam>30000){ 
+			System.out.println("shit.");
+			return false;
+			} */
         for (int x = 1; x< 10 ; x++)
         {
-            puzzle[i]=x;
-            if(checkConstraints(puzzle))
-            {
-                if (i>79)//terminal condition
-                {
-                	charpuzzle();
-                	System.out.println(this);//print out the completed puzzle
-                    puzzle[i]=0;
-                    return true;
-                }
-                else
-                    if(makePuzzle(puzzle,i+1)) return true;//find a number for the next square                          
-            }
-            puzzle[i]=0;//this try didn't work, delete the evidence 
-        }       
+			if (puzzle[i] != 0) {
+				if (makePuzzle(puzzle, i + 1))
+					return true;
+			} else {
+				puzzle[i] = x;
+				if (checkConstraints(puzzle)) {
+					if (i > 79)// terminal condition
+					{
+						charpuzzle();
+						System.out.println(this);// print out the completed
+													// puzzle
+						puzzle[i] = 0;
+						return true;
+					} else if (makePuzzle(puzzle, i + 1))
+						return true;// find a number for the next square
+				}
+				puzzle[i] = 0;// this try didn't work, delete the evidence
+			}
+        }
         return false;
+        
     }
     public boolean checkConstraints(int[] puzzle)
     {

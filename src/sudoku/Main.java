@@ -44,7 +44,7 @@ public class Main {
 		FileReader fr;
 		try {
 			
-			fr = new FileReader("9char.txt");
+			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
 			BufferedReader br = new BufferedReader(fr);
 			Random rand= new Random();
 			int sorszam=rand.nextInt(1758);
@@ -65,12 +65,20 @@ public class Main {
 			e.printStackTrace();
 		}
 		Tabla t=new Tabla();
-		//t.feltolt();
-		//t.NegyzetesFeltoltes();
-		//t.print();
-		//t.NegyzetPrint();
+		
 		t.ToltPuzzle(t.puzzle);
-		t.makePuzzle(t.puzzle, 9);
-		//System.out.print(t.negyzetek.get(0).mezoim[2][2]);
+		t.makePuzzle(t.puzzle, 0);
+		
+		for(int i = 0; i < 35; i++){ //Az, hogy hány számot távolítsunk el (ha mindig mást generál a két random)
+			Random rand = new Random();
+			int value = rand.nextInt(9);
+			int value_2 = rand.nextInt(9);
+			t.puzzle[value*9+value_2] = 0;
+		}
+		
+		System.out.println("\n" + t.toString() + "\n");
+		t.szam = 0;
+		t.makePuzzle(t.puzzle, 0);
+		
 	}//Main fï¿½ggvï¿½ny vï¿½ge
 }//Main vï¿½ge
