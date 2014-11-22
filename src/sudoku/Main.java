@@ -62,7 +62,7 @@ public class Main {
 			t.puzzle[value * 9 + value_2] = 0;
 
 		}
-
+		t.charpuzzle();
 		System.out.println("\n" + t.toString() + "\n");
 		// t.szam = 0;
 		// t.save81();
