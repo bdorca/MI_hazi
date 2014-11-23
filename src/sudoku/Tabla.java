@@ -5,18 +5,20 @@ import java.util.Random;
 
 public class Tabla {
 	public int[] puzzle;
+	public int[] kitakart;
 	public int[] nyolcvanegy;
 	public int szamlalo = 0;
 	public int szam = 0;
 	public char[] chpuzzle;
 	public static char[] karakterkeszlet;
-	char[] konvert;
+	public char[] konvert;
 	
 	public Tabla() {
 		puzzle = new int[81];
 		nyolcvanegy = new int[81];
 		konvert=new char[9];
 		Arrays.fill(konvert, '0');
+
 	}
 
 	public void save81() {
@@ -465,6 +467,28 @@ public class Tabla {
 			}
 		}
 	}
+	
+	public char[] charpuzzle(int[] tomb) {
+		char[] chtomb = new char[81];
+		if(konvert[0]=='0'){
+			konvert = new char[9];
+			for (int i = 0; i < 9; i++) {
+				int index=puzzle[i * 10] - 1;
+				if(index!=-1){
+					konvert[index] = karakterkeszlet[i];
+				}
+			}
+		}
+		for (int i = 0; i < 81; i++) {
+			int index=tomb[i] - 1;
+			if(index!=-1){
+				chtomb[i] = konvert[index];
+			}else{
+				chtomb[i] = '%';
+			}
+		}
+		return chtomb;
+	}
 
 	@Override
 	public String toString() {
@@ -503,6 +527,19 @@ public class Tabla {
 		for (int sorszam = 9; sorszam < 81; sorszam++) {
 			puzzle[sorszam] = 0;
 		}
+	}
+
+	public void reset() {
+		puzzle=new int[81];
+		kitakart=new int[81];
+		nyolcvanegy=new int[81];
+		szamlalo = 0;
+		szam = 0;
+		chpuzzle=new char[81];
+		karakterkeszlet=new char[9];
+		konvert=new char[9];
+		Arrays.fill(konvert, '0');
+
 	}
 
 }
