@@ -14,12 +14,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.JButton;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Random;
 
 import javax.swing.JSpinner;
 import javax.swing.JLabel;
@@ -114,6 +117,7 @@ public class SFrame extends JFrame {
 
 		JButton btnHint = new JButton("Hint");
 		GridBagConstraints gbc_btnHint = new GridBagConstraints();
+		btnHint.addActionListener(bl);
 		gbc_btnHint.anchor = GridBagConstraints.WEST;
 		gbc_btnHint.insets = new Insets(0, 0, 5, 0);
 		gbc_btnHint.gridx = 0;
@@ -121,6 +125,7 @@ public class SFrame extends JFrame {
 		buttonPanel.add(btnHint, gbc_btnHint);
 
 		JButton btnSolve = new JButton("Solve");
+		btnSolve.addActionListener(bl);
 		GridBagConstraints gbc_btnSolve = new GridBagConstraints();
 		gbc_btnSolve.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSolve.anchor = GridBagConstraints.WEST;
@@ -145,13 +150,10 @@ public class SFrame extends JFrame {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				controller.setNehezseg((int) spinner.getValue());
-
+				controller.setNehezseg((Integer) spinner.getValue());
 			}
-
 		});
 		panel.add(spinner);
-
 	}
 
 	public void setBoard() {
@@ -159,17 +161,64 @@ public class SFrame extends JFrame {
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
+				f[x][y].setFont(new Font("Courier", Font.BOLD,20));
 				// if(controller.getT().chpuzzle[x*9+y]!='%'){
 				f[x][y].setText(null);
 				f[x][y].setEditable(true);
+				f[x][y].setBackground(Color.WHITE);
 				if (asd[x * 9 + y] != '%') {
-					f[x][y].setText(String.valueOf(controller.getT().chpuzzle[x
+					f[x][y].setText(String.valueOf(asd[x
 							* 9 + y]));
+					f[x][y].setBackground(new Color(220,220,220));
 					f[x][y].setEditable(false);
 
 				}
 			}
 		}
+	}
+	
+	public void solveBoard() {
+		char[] asd = controller.getT().charpuzzle(controller.getT().nyolcvanegy);
+		controller.getT().kitakart = controller.getT().nyolcvanegy.clone();
+		for (int x = 0; x < 9; x++) {
+			for (int y = 0; y < 9; y++) {
+				f[x][y].setHorizontalAlignment(JTextField.CENTER);
+				// if(controller.getT().chpuzzle[x*9+y]!='%'){
+				f[x][y].setText(null);
+				f[x][y].setEditable(true);
+				if (asd[x * 9 + y] != '%') {
+					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
+					f[x][y].setEditable(false);
+
+				}
+			}
+		}
+	}
+	
+	public void hintBoard(){
+		int szam = 0;
+		
+		for(int i = 0; i < 81; i++){
+			if(controller.getT().kitakart[i] == 0){
+				szam++;
+			}
+		}
+		if(szam == 0) return;
+		int value = 0;
+		Random rand = new Random();
+		value = rand.nextInt(81);
+		while(controller.getT().kitakart[value] != 0){
+			value = rand.nextInt(81);
+		}
+		controller.getT().kitakart[value]=controller.getT().nyolcvanegy[value];
+		int ertek=controller.getT().kitakart[value];
+		f[value/9][value%9].setHorizontalAlignment(JTextField.CENTER);
+		// if(controller.getT().chpuzzle[x*9+y]!='%'){
+		f[value/9][value%9].setText(null);
+		f[value/9][value%9].setEditable(true);
+		f[value/9][value%9].setText(String.valueOf(controller.getT().getChar(ertek-1)));
+		f[value/9][value%9].setEditable(false);
+		f[value/9][value%9].setBackground(new Color(66,213,229));
 	}
 
 	public class TextListener implements DocumentListener {
@@ -198,9 +247,14 @@ public class SFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int z = 0;
 			String str = e.getActionCommand();
-			switch (str) {
-			case "New Game":
+			if(str == "New Game") z = 0;
+			if(str == "Hint") z = 1;
+			if(str == "Solve") z = 2;
+
+			switch (z) {
+			case 0:
 				System.out.println("NEWGAME");
 				controller.resetTabla();
 				controller.initCharset();
@@ -209,9 +263,11 @@ public class SFrame extends JFrame {
 				System.out.println(controller.solveTabla());
 				setBoard();
 				break;
-			case "Hint":
+			case 1:
+				hintBoard();
 				break;
-			case "Solve":
+			case 2:
+				solveBoard();
 				break;
 			}
 		}

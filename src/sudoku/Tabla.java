@@ -54,7 +54,6 @@ public class Tabla {
 						charpuzzle();
 						System.out.println(this);// print out the completed
 													// puzzle
-						puzzle[i] = 0;
 						return true;
 					} else if (makePuzzle(puzzle, i + 1))
 						return true;// find a number for the next square
@@ -490,6 +489,10 @@ public class Tabla {
 		return chtomb;
 	}
 
+	public char getChar(int c){
+		return konvert[c];
+	}
+	
 	@Override
 	public String toString() {
 		String string = "";
