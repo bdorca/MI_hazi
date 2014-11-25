@@ -12,6 +12,8 @@ public class Tabla {
 	public char[] chpuzzle;
 	public static char[] karakterkeszlet;
 	public char[] konvert;
+
+	public int kitakartNum=0;
 	
 	public Tabla() {
 		puzzle = new int[81];
@@ -491,6 +493,15 @@ public class Tabla {
 
 	public char getChar(int c){
 		return konvert[c];
+	}
+	
+	public int getINT(char c){
+		for(int i=0;i<9;i++){
+			if(konvert[i]==c){
+				return i+1;
+			}
+		}
+		return -1;
 	}
 	
 	@Override

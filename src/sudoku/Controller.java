@@ -28,10 +28,7 @@ public class Controller {
 			}
 			String szo = br.readLine();
 			System.out.println(szo);
-			Tabla.karakterkeszlet = szo.toCharArray();
-			for(int i=0;i<9;i++){
-				Tabla.karakterkeszlet[i]=Character.toUpperCase(Tabla.karakterkeszlet[i]);
-			}
+			Tabla.karakterkeszlet = szo.toUpperCase().toCharArray();
 			br.close();
 			fr.close();
 		} catch (FileNotFoundException e) {
@@ -57,7 +54,7 @@ public class Controller {
 	}
 	
 	public void kitakarTabla(){
-		
+		t.kitakartNum=0;
 		for (int i = 0; i < (nehezseg * 10 + 1); i++) { // Az, hogy hány számot távolítsunk el (ha mindig mást generál a két random)
 			Random rand = new Random();
 			int value = rand.nextInt(9);
@@ -67,7 +64,7 @@ public class Controller {
 				value_2 = rand.nextInt(9);
 			}
 			t.puzzle[value * 9 + value_2] = 0;
-
+			t.kitakartNum++;
 		}
 		t.kitakart =t.puzzle.clone();
 		t.charpuzzle();
@@ -99,5 +96,16 @@ public class Controller {
 	public void resetTabla() {
 		t.reset();
 		
+	}
+	
+	public String printINT(int[] t){
+		String str=new String();
+		for(int i=0;i<t.length;i++){
+			str+=t[i]+" ";
+			if(i%8==0){
+				str+="\n";
+			}
+		}
+		return str;
 	}
 }

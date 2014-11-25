@@ -3,6 +3,7 @@ package sudoku;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -11,6 +12,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.JButton;
 
 import java.awt.Color;
@@ -18,12 +20,15 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.Random;
 
 import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
 import javax.swing.JSpinner;
 import javax.swing.JLabel;
 import javax.swing.SpinnerNumberModel;
@@ -66,13 +71,13 @@ public class SFrame extends JFrame {
 		JPanel gamePanel = new JPanel();
 		contentPane.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.setLayout(new GridLayout(3, 3, 5, 5));
-
+		TextListener tl=new TextListener();
 		// char[] asd=controller.getT().charpuzzle(controller.getT().kitakart);
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
 				f[x][y] = new JTextFieldLimit(1);
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
-
+				f[x][y].getDocument().addDocumentListener(tl);
 				// if(asd[x*9+y]!='%'){
 				// f[x][y].setText(String.valueOf(controller.getT().chpuzzle[x*9+y]));
 				// f[x][y].setEditable(false);
@@ -130,6 +135,8 @@ public class SFrame extends JFrame {
 		buttonPanel.add(btnHint, gbc_btnHint);
 
 		JButton btnSolve = new JButton("Solve");
+		
+	    
 		btnSolve.addActionListener(bl);
 		GridBagConstraints gbc_btnSolve = new GridBagConstraints();
 		gbc_btnSolve.insets = new Insets(0, 0, 5, 0);
@@ -201,10 +208,10 @@ public class SFrame extends JFrame {
 				f[x][y].setEditable(true);
 				f[x][y].setBackground(Color.WHITE);
 				if (asd[x * 9 + y] != '%') {
+					f[x][y].setEditable(false);
 					f[x][y].setText(String.valueOf(asd[x
 							* 9 + y]));
 					f[x][y].setBackground(new Color(220,220,220));
-					f[x][y].setEditable(false);
 
 				}
 			}
@@ -221,62 +228,99 @@ public class SFrame extends JFrame {
 				f[x][y].setText(null);
 				f[x][y].setEditable(true);
 				if (asd[x * 9 + y] != '%') {
-					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
 					f[x][y].setEditable(false);
+					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
 
 				}
 			}
 		}
+		controller.getT().kitakartNum=0;
 	}
 	
 	public void hintBoard(){
-		int szam = 0;
-		
-		for(int i = 0; i < 81; i++){
-			if(controller.getT().kitakart[i] == 0){
-				szam++;
-			}
+//		int szam = 0;
+//		
+//		for(int i = 0; i < 81; i++){
+//			if(controller.getT().kitakart[i] <= 0){
+//				szam++;
+//			}
+//		}
+//		if(szam == 0) return;
+		if(controller.getT().kitakartNum<=0){ 
+			solved();
+			return;
 		}
-		if(szam == 0) return;
 		int value = 0;
 		Random rand = new Random();
 		value = rand.nextInt(81);
-		while(controller.getT().kitakart[value] != 0){
+		while(controller.getT().kitakart[value] > 0){
 			value = rand.nextInt(81);
 		}
 		controller.getT().kitakart[value]=controller.getT().nyolcvanegy[value];
 		int ertek=controller.getT().kitakart[value];
-		f[value/9][value%9].setHorizontalAlignment(JTextField.CENTER);
+		//controller.getT().kitakartNum--;
 		// if(controller.getT().chpuzzle[x*9+y]!='%'){
-		f[value/9][value%9].setText(null);
-		f[value/9][value%9].setEditable(true);
+		
+		
 		f[value/9][value%9].setText(String.valueOf(controller.getT().getChar(ertek-1)));
 		f[value/9][value%9].setEditable(false);
 		f[value/9][value%9].setBackground(new Color(66,213,229));
 	}
 
+	public void solved(){
+		timer.stop();		
+	}
+	
 	public class TextListener implements DocumentListener {
 
 		@Override
 		public void changedUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void insertUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
-
+			int x=0;
+			int y=0;
+			
+			for(int i=0;i<9;i++){
+				for(int j=0;j<9;j++){
+					if(f[i][j].getDocument()==arg0.getDocument()){
+						x=i;
+						y=j;
+					}
+				}
+			}
+			if(f[x][y].isEditable()){
+				String betu=f[x][y].getText().toUpperCase();
+				int vart =controller.getT().nyolcvanegy[9*x+y];
+				char vartC=controller.getT().getChar(vart-1);
+				controller.getT().kitakart[x*9+y]=controller.getT().getINT(betu.charAt(0));
+				if(controller.getT().kitakart[x*9+y]==-1 || controller.getT().kitakart[x*9+y]!=controller.getT().nyolcvanegy[x*9+y]){					
+					if(helpmode){
+						f[x][y].setBackground(Color.RED);
+					}
+				}else{
+					controller.getT().kitakartNum--;
+					if(helpmode){
+						f[x][y].setBackground(Color.GREEN);
+					}
+				}
+				System.out.println(controller.getT().kitakartNum);
+				System.out.println(x+" "+y+" "+betu+" "+controller.getT().kitakart[x*9+y]);
+				//System.out.println(controller.printINT(controller.getT().kitakart));
+			}
+			if(controller.getT().kitakartNum==0){
+				solved();
+			}
 		}
 
 		@Override
 		public void removeUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 	}
-
 	public class BtnListener implements ActionListener {
 
 		@Override
@@ -304,7 +348,7 @@ public class SFrame extends JFrame {
 				break;
 			case 2:
 				solveBoard();
-				timer.stop();
+				solved();
 				break;
 			}
 		}
