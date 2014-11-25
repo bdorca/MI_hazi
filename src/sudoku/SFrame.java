@@ -29,6 +29,7 @@ import java.util.Random;
 
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JLabel;
 import javax.swing.SpinnerNumberModel;
@@ -50,6 +51,7 @@ public class SFrame extends JFrame {
 	private JLabel lblTime;
 	private Timer timer;
 	private int time;
+	private boolean ended=false;
 	/**
 	 * Create the frame.
 	 */
@@ -223,10 +225,6 @@ public class SFrame extends JFrame {
 		controller.getT().kitakart = controller.getT().nyolcvanegy.clone();
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
-				f[x][y].setHorizontalAlignment(JTextField.CENTER);
-				// if(controller.getT().chpuzzle[x*9+y]!='%'){
-				f[x][y].setText(null);
-				f[x][y].setEditable(true);
 				if (asd[x * 9 + y] != '%') {
 					f[x][y].setEditable(false);
 					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
@@ -256,19 +254,22 @@ public class SFrame extends JFrame {
 		while(controller.getT().kitakart[value] > 0){
 			value = rand.nextInt(81);
 		}
-		controller.getT().kitakart[value]=controller.getT().nyolcvanegy[value];
-		int ertek=controller.getT().kitakart[value];
+		int ertek=controller.getT().nyolcvanegy[value];
 		//controller.getT().kitakartNum--;
 		// if(controller.getT().chpuzzle[x*9+y]!='%'){
-		
+		time+=60;		
 		
 		f[value/9][value%9].setText(String.valueOf(controller.getT().getChar(ertek-1)));
 		f[value/9][value%9].setEditable(false);
 		f[value/9][value%9].setBackground(new Color(66,213,229));
+		
+		controller.getT().kitakart[value]=controller.getT().nyolcvanegy[value];
 	}
 
 	public void solved(){
-		timer.stop();		
+		ended=true;
+		timer.stop();
+		JOptionPane.showMessageDialog(this, String.format("Ön nyert! ideje: %02d:%02d", time/60,time%60));
 	}
 	
 	public class TextListener implements DocumentListener {
@@ -292,8 +293,16 @@ public class SFrame extends JFrame {
 				}
 			}
 			if(f[x][y].isEditable()){
+				int prev=controller.getT().kitakart[x*9+y];
 				String betu=f[x][y].getText().toUpperCase();
 				int vart =controller.getT().nyolcvanegy[9*x+y];
+				if(prev==vart){
+					if(betu.charAt(0)!=controller.getT().getChar(prev-1)){
+						controller.getT().kitakartNum++;
+					}else{
+						return;
+					}
+				}
 				char vartC=controller.getT().getChar(vart-1);
 				controller.getT().kitakart[x*9+y]=controller.getT().getINT(betu.charAt(0));
 				if(controller.getT().kitakart[x*9+y]==-1 || controller.getT().kitakart[x*9+y]!=controller.getT().nyolcvanegy[x*9+y]){					
@@ -341,14 +350,20 @@ public class SFrame extends JFrame {
 				System.out.println(controller.solveTabla());
 				setBoard();
 				time=0;
+				ended=false;
 				timer.start();
 				break;
 			case 1:
-				hintBoard();
+				if(!ended){
+					hintBoard();
+				}
 				break;
 			case 2:
-				solveBoard();
-				solved();
+				if(!ended){
+					time=3598;
+					solveBoard();
+					solved();
+				}
 				break;
 			}
 		}
