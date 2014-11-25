@@ -1,7 +1,6 @@
 package sudoku;
 
 import java.awt.BorderLayout;
-
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
@@ -24,9 +23,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 
+import javax.swing.AbstractButton;
 import javax.swing.JSpinner;
 import javax.swing.JLabel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.JToggleButton;
+import javax.swing.Timer;
 
 public class SFrame extends JFrame {
 
@@ -39,7 +41,10 @@ public class SFrame extends JFrame {
 	private JTextFieldLimit f[][] = new JTextFieldLimit[9][9];
 	private JPanel p[][] = new JPanel[3][3];
 	private Controller controller;
-
+	private boolean helpmode=false;
+	private JLabel lblTime;
+	private Timer timer;
+	private int time;
 	/**
 	 * Create the frame.
 	 */
@@ -100,9 +105,9 @@ public class SFrame extends JFrame {
 		BtnListener bl = new BtnListener();
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
 		gbl_buttonPanel.columnWidths = new int[] { 83, 0 };
-		gbl_buttonPanel.rowHeights = new int[] { 23, 23, 23, 0, 0 };
+		gbl_buttonPanel.rowHeights = new int[] { 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_buttonPanel.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
-		gbl_buttonPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
+		gbl_buttonPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				Double.MIN_VALUE };
 		buttonPanel.setLayout(gbl_buttonPanel);
 
@@ -135,6 +140,7 @@ public class SFrame extends JFrame {
 
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 3;
@@ -154,6 +160,34 @@ public class SFrame extends JFrame {
 			}
 		});
 		panel.add(spinner);
+		
+		JToggleButton tglbtnHelpMe = new JToggleButton("Help ME");
+		GridBagConstraints gbc_tglbtnHelpMe = new GridBagConstraints();
+		gbc_tglbtnHelpMe.insets = new Insets(0, 0, 5, 0);
+		tglbtnHelpMe.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AbstractButton abstractButton = (AbstractButton) e.getSource();
+		        helpmode = abstractButton.getModel().isSelected();
+				System.out.println(helpmode);
+			}
+			
+		});
+		gbc_tglbtnHelpMe.gridx = 0;
+		gbc_tglbtnHelpMe.gridy = 4;
+		buttonPanel.add(tglbtnHelpMe, gbc_tglbtnHelpMe);
+		
+		JPanel panel_1 = new JPanel();
+		contentPane.add(panel_1, BorderLayout.SOUTH);
+		panel_1.setLayout(new BorderLayout(0, 0));
+		
+		lblTime = new JLabel("Time");
+		panel_1.add(lblTime, BorderLayout.CENTER);
+		
+		timer = new Timer(1000, new TimeListener());
+		timer.setInitialDelay(0);
+
 	}
 
 	public void setBoard() {
@@ -226,7 +260,7 @@ public class SFrame extends JFrame {
 		@Override
 		public void changedUpdate(DocumentEvent arg0) {
 			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
@@ -262,15 +296,30 @@ public class SFrame extends JFrame {
 				controller.kitakarTabla();
 				System.out.println(controller.solveTabla());
 				setBoard();
+				time=0;
+				timer.start();
 				break;
 			case 1:
 				hintBoard();
 				break;
 			case 2:
 				solveBoard();
+				timer.stop();
 				break;
 			}
 		}
 
+	}
+	
+	private class TimeListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			time++;
+			String t=String.format("%02d:%02d", time/60, time%60 );
+			lblTime.setText(t);
+		}
+		
 	}
 }

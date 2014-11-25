@@ -18,8 +18,8 @@ public class Controller {
 	public void initCharset(){
 		FileReader fr;
 		try {
-			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
-			//fr= new FileReader("9char.txt");
+//			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\fï¿½lï¿½v#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
+			fr= new FileReader("9char.txt");
 			BufferedReader br = new BufferedReader(fr);
 			Random rand = new Random();
 			int sorszam = rand.nextInt(1758);
