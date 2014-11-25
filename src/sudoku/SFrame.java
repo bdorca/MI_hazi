@@ -78,6 +78,7 @@ public class SFrame extends JFrame {
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
 				f[x][y] = new JTextFieldLimit(1);
+				f[x][y].setEditable(false);
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
 				f[x][y].getDocument().addDocumentListener(tl);
 				// if(asd[x*9+y]!='%'){
