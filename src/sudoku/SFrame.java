@@ -1,40 +1,53 @@
 package sudoku;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 
-import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.JButton;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.util.Random;
-
-import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.JLabel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JToggleButton;
-import javax.swing.Timer;
+import com.xeiam.xchart.Chart;
+import com.xeiam.xchart.ChartBuilder;
+import com.xeiam.xchart.StyleManager.ChartType;
+import com.xeiam.xchart.StyleManager.TextAlignment;
+import com.xeiam.xchart.SwingWrapper;
+import com.xeiam.xchart.XChartPanel;
 
 public class SFrame extends JFrame {
 
@@ -51,7 +64,8 @@ public class SFrame extends JFrame {
 	private JLabel lblTime;
 	private Timer timer;
 	private int time;
-	private boolean ended=false;
+	private boolean ended=true;
+	private int nehezseg=1;
 	/**
 	 * Create the frame.
 	 */
@@ -74,18 +88,13 @@ public class SFrame extends JFrame {
 		contentPane.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.setLayout(new GridLayout(3, 3, 5, 5));
 		TextListener tl=new TextListener();
-		// char[] asd=controller.getT().charpuzzle(controller.getT().kitakart);
+
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
 				f[x][y] = new JTextFieldLimit(1);
 				f[x][y].setEditable(false);
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
 				f[x][y].getDocument().addDocumentListener(tl);
-				// if(asd[x*9+y]!='%'){
-				// f[x][y].setText(String.valueOf(controller.getT().chpuzzle[x*9+y]));
-				// f[x][y].setEditable(false);
-				//
-				// }
 
 			}
 		}
@@ -113,9 +122,9 @@ public class SFrame extends JFrame {
 		BtnListener bl = new BtnListener();
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
 		gbl_buttonPanel.columnWidths = new int[] { 83, 0 };
-		gbl_buttonPanel.rowHeights = new int[] { 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_buttonPanel.rowHeights = new int[] { 23, 23, 23, 0, 0, 0 };
 		gbl_buttonPanel.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
-		gbl_buttonPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		gbl_buttonPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
 				Double.MIN_VALUE };
 		buttonPanel.setLayout(gbl_buttonPanel);
 
@@ -166,14 +175,14 @@ public class SFrame extends JFrame {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				controller.setNehezseg((Integer) spinner.getValue());
+				nehezseg=(Integer) spinner.getValue();
+				
 			}
 		});
 		panel.add(spinner);
 		
 		JToggleButton tglbtnHelpMe = new JToggleButton("Help ME");
 		GridBagConstraints gbc_tglbtnHelpMe = new GridBagConstraints();
-		gbc_tglbtnHelpMe.insets = new Insets(0, 0, 5, 0);
 		tglbtnHelpMe.addActionListener(new ActionListener(){
 
 			@Override
@@ -206,7 +215,6 @@ public class SFrame extends JFrame {
 			for (int y = 0; y < 9; y++) {
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
 				f[x][y].setFont(new Font("Courier", Font.BOLD,20));
-				// if(controller.getT().chpuzzle[x*9+y]!='%'){
 				f[x][y].setText(null);
 				f[x][y].setEditable(true);
 				f[x][y].setBackground(Color.WHITE);
@@ -237,14 +245,6 @@ public class SFrame extends JFrame {
 	}
 	
 	public void hintBoard(){
-//		int szam = 0;
-//		
-//		for(int i = 0; i < 81; i++){
-//			if(controller.getT().kitakart[i] <= 0){
-//				szam++;
-//			}
-//		}
-//		if(szam == 0) return;
 		if(controller.getT().kitakartNum<=0){ 
 			solved();
 			return;
@@ -256,8 +256,7 @@ public class SFrame extends JFrame {
 			value = rand.nextInt(81);
 		}
 		int ertek=controller.getT().nyolcvanegy[value];
-		//controller.getT().kitakartNum--;
-		// if(controller.getT().chpuzzle[x*9+y]!='%'){
+
 		time+=60;		
 		
 		f[value/9][value%9].setText(String.valueOf(controller.getT().getChar(ertek-1)));
@@ -270,7 +269,86 @@ public class SFrame extends JFrame {
 	public void solved(){
 		ended=true;
 		timer.stop();
-		JOptionPane.showMessageDialog(this, String.format("Ön nyert! ideje: %02d:%02d", time/60,time%60));
+		
+		File f=new File("scores.txt");
+		try {
+			
+		    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
+		    String now=new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+		    System.out.println(now+" "+new Date());
+		    out.println(controller.getNehezseg()+";"+now+";"+time);
+		    out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+		
+		XChartPanel xcpanel=drawChart(f);
+		JPanel p=new JPanel();
+		p.setLayout(new BorderLayout());
+		JLabel label=new JLabel(String.format("Ön nyert! ideje: %02d:%02d", time/60,time%60));
+		label.setFont(new Font("Courier", Font.BOLD,20));
+		p.add(label,BorderLayout.NORTH);
+		p.add(xcpanel,BorderLayout.CENTER);
+		JOptionPane.showMessageDialog(this,p,"WIN" , JOptionPane.PLAIN_MESSAGE);
+		
+	}
+	
+	public XChartPanel drawChart(File f){
+		FileReader fr;
+		try {
+			fr = new FileReader(f);
+			BufferedReader br=new BufferedReader(fr);
+			
+			ArrayList<Date> dateList=new ArrayList<Date>();
+			ArrayList<Integer> timeList=new ArrayList<Integer>();
+			
+			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			String line;
+			String[] adat;
+			int neh=controller.getNehezseg();
+			
+        	while (true) {
+    			line = br.readLine();
+    			if (line == null){
+    				break;
+    			}
+    			adat=line.split(";");
+    			if(Integer.parseInt(adat[0])==neh){
+    				dateList.add(sdf.parse(adat[1]));
+    				System.out.println(dateList.get(dateList.size()-1));
+    				timeList.add(Integer.parseInt(adat[2]));
+    			}
+			}
+        	br.close();
+        	
+        	while(dateList.size()>5){
+        		dateList.remove(0);
+        		timeList.remove(0);
+        	}
+        	
+        	Chart chart = new ChartBuilder().width(500).height(500).title(neh+". szint").build();
+        	chart.getStyleManager().setLegendVisible(false);
+        	chart.addSeries("megfejtés ideje", dateList, timeList);
+        	chart.setXAxisTitle("dátum");
+        	chart.getStyleManager().setDatePattern("MM-dd HH:mm");
+        	chart.getStyleManager().setYAxisLabelAlignment(TextAlignment.Right);
+        	chart.setYAxisTitle("megfejtés ideje [sec]");
+        	
+        	XChartPanel xcpanel=new XChartPanel(chart);
+        	return xcpanel;
+        	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public class TextListener implements DocumentListener {
@@ -337,14 +415,15 @@ public class SFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			int z = 0;
 			String str = e.getActionCommand();
-			if(str == "New Game") z = 0;
-			if(str == "Hint") z = 1;
-			if(str == "Solve") z = 2;
+			if(str.equals("New Game")) z = 0;
+			if(str.equals("Hint")) z = 1;
+			if(str.equals("Solve")) z = 2;
 
 			switch (z) {
 			case 0:
 				System.out.println("NEWGAME");
 				controller.resetTabla();
+				controller.setNehezseg(nehezseg);
 				controller.initCharset();
 				controller.makeTabla();
 				controller.kitakarTabla();
@@ -377,6 +456,9 @@ public class SFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			time++;
+			if(helpmode){
+				time++;
+			}
 			String t=String.format("%02d:%02d", time/60, time%60 );
 			lblTime.setText(t);
 		}

@@ -89,6 +89,11 @@ public class Controller {
 	public void setNehezseg(int nehezseg) {
 		this.nehezseg = nehezseg;
 	}
+	
+	public int getNehezseg() {
+		return nehezseg;
+	}
+	
 	public Tabla getT() {
 		return t;
 	}
