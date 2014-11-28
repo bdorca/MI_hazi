@@ -44,9 +44,13 @@ import javax.swing.event.DocumentListener;
 
 import com.xeiam.xchart.Chart;
 import com.xeiam.xchart.ChartBuilder;
+import com.xeiam.xchart.Series;
+import com.xeiam.xchart.SeriesColor;
+import com.xeiam.xchart.SeriesLineStyle;
+import com.xeiam.xchart.SeriesMarker;
 import com.xeiam.xchart.StyleManager.ChartType;
+import com.xeiam.xchart.StyleManager.LegendPosition;
 import com.xeiam.xchart.StyleManager.TextAlignment;
-import com.xeiam.xchart.SwingWrapper;
 import com.xeiam.xchart.XChartPanel;
 
 public class SFrame extends JFrame {
@@ -66,6 +70,8 @@ public class SFrame extends JFrame {
 	private int time;
 	private boolean ended=true;
 	private int nehezseg=1;
+	private int rosszTipp=0;
+	private int tipp=0;
 	/**
 	 * Create the frame.
 	 */
@@ -252,7 +258,7 @@ public class SFrame extends JFrame {
 		int value = 0;
 		Random rand = new Random();
 		value = rand.nextInt(81);
-		while(controller.getT().kitakart[value] > 0){
+		while(controller.getT().kitakart[value] > 0 && controller.getT().kitakart[value]==controller.getT().nyolcvanegy[value]){
 			value = rand.nextInt(81);
 		}
 		int ertek=controller.getT().nyolcvanegy[value];
@@ -276,24 +282,25 @@ public class SFrame extends JFrame {
 		    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
 		    String now=new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 		    System.out.println(now+" "+new Date());
-		    out.println(controller.getNehezseg()+";"+now+";"+time);
+		    out.println(controller.getNehezseg()+";"+now+";"+time+";"+tipp+";"+rosszTipp);
 		    out.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
 		
-		XChartPanel xcpanel=drawChart(f);
+		JPanel xcpanel=drawChart(f);
 		JPanel p=new JPanel();
 		p.setLayout(new BorderLayout());
 		JLabel label=new JLabel(String.format("Ön nyert! ideje: %02d:%02d", time/60,time%60));
 		label.setFont(new Font("Courier", Font.BOLD,20));
+
 		p.add(label,BorderLayout.NORTH);
 		p.add(xcpanel,BorderLayout.CENTER);
 		JOptionPane.showMessageDialog(this,p,"WIN" , JOptionPane.PLAIN_MESSAGE);
 		
 	}
 	
-	public XChartPanel drawChart(File f){
+	public JPanel drawChart(File f){
 		FileReader fr;
 		try {
 			fr = new FileReader(f);
@@ -301,6 +308,9 @@ public class SFrame extends JFrame {
 			
 			ArrayList<Date> dateList=new ArrayList<Date>();
 			ArrayList<Integer> timeList=new ArrayList<Integer>();
+			ArrayList<Integer> tippList=new ArrayList<Integer>(); 
+			ArrayList<Integer> rosszTippList=new ArrayList<Integer>();
+			ArrayList<Integer> joTippList=new ArrayList<Integer>();
 			
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			String line;
@@ -317,6 +327,9 @@ public class SFrame extends JFrame {
     				dateList.add(sdf.parse(adat[1]));
     				System.out.println(dateList.get(dateList.size()-1));
     				timeList.add(Integer.parseInt(adat[2]));
+    				tippList.add(Integer.parseInt(adat[3]));
+    				rosszTippList.add(Integer.parseInt(adat[4]));
+    				joTippList.add(Integer.parseInt(adat[3])-Integer.parseInt(adat[4]));
     			}
 			}
         	br.close();
@@ -324,18 +337,63 @@ public class SFrame extends JFrame {
         	while(dateList.size()>5){
         		dateList.remove(0);
         		timeList.remove(0);
+        		tippList.remove(0);
+        		rosszTippList.remove(0);
+        		joTippList.remove(0);
         	}
+
+        	JPanel panel=new JPanel();
+        	panel.setLayout(new BorderLayout());
         	
-        	Chart chart = new ChartBuilder().width(500).height(500).title(neh+". szint").build();
-        	chart.getStyleManager().setLegendVisible(false);
-        	chart.addSeries("megfejtés ideje", dateList, timeList);
-        	chart.setXAxisTitle("dátum");
-        	chart.getStyleManager().setDatePattern("MM-dd HH:mm");
-        	chart.getStyleManager().setYAxisLabelAlignment(TextAlignment.Right);
-        	chart.setYAxisTitle("megfejtés ideje [sec]");
+        	Chart chart1 = new ChartBuilder().width(600).height(250).title(neh+". szint legutóbbi játékainak eredménye").build();
+        	chart1.getStyleManager().setLegendVisible(false);
+        	Series series=chart1.addSeries("megfejtés ideje", dateList, timeList);
         	
-        	XChartPanel xcpanel=new XChartPanel(chart);
-        	return xcpanel;
+        	series.setLineColor(SeriesColor.BLUE);
+        	series.setMarkerColor(Color.BLUE);
+        	series.setMarker(SeriesMarker.CIRCLE);
+        	series.setLineStyle(SeriesLineStyle.DASH_DASH);
+        	
+        	chart1.setXAxisTitle("dátum");
+        	chart1.getStyleManager().setDatePattern("MM-dd HH:mm");
+        	chart1.getStyleManager().setYAxisLabelAlignment(TextAlignment.Right);
+        	chart1.setYAxisTitle("megfejtés ideje [sec]");
+        	chart1.getStyleManager().setAxisTickLabelsFont(new Font("Courier", Font.PLAIN, 10));
+        	 
+        	chart1.getStyleManager().setPlotPadding(5);
+        	
+        	XChartPanel xcpanel1=new XChartPanel(chart1);
+        	
+        	panel.add(xcpanel1,BorderLayout.NORTH);
+        	
+        	Chart chart2 = new ChartBuilder().chartType(ChartType.Area).width(600).height(250).title(neh+". szint próbálkozások száma").xAxisTitle("dátum").yAxisTitle("db").build();
+        	
+        	series=chart2.addSeries("összes próbálkozás", dateList, tippList);
+        	series.setFillColor(new Color(0,0,255,128));
+        	series.setLineColor(new Color(0,0,255,128));
+        	series.setMarkerColor(new Color(0,0,255,128));
+        	
+        	series=chart2.addSeries("jó próbálkozás", dateList, joTippList);
+        	series.setFillColor(new Color(0,255,0,128));
+        	series.setLineColor(new Color(0,255,0,128));
+        	series.setMarkerColor(new Color(0,255,0,128));
+
+        	series=chart2.addSeries("rossz próbálkozás", dateList, rosszTippList);
+        	series.setFillColor(new Color(255,0,0,128));
+        	series.setLineColor(new Color(255,0,0,128));
+        	series.setMarkerColor(new Color(255,0,0,128));
+
+        	// Customize Chart
+        	chart2.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
+        	chart2.getStyleManager().setAxisTitlesVisible(true);
+        	chart2.getStyleManager().setDatePattern("MM-dd HH:mm");
+        	chart2.getStyleManager().setAxisTickLabelsFont(new Font("Courier", Font.PLAIN, 10));
+        	
+        	XChartPanel xcpanel2=new XChartPanel(chart2);
+        	
+        	panel.add(xcpanel2, BorderLayout.SOUTH);
+        	
+        	return panel;
         	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -372,6 +430,7 @@ public class SFrame extends JFrame {
 				}
 			}
 			if(f[x][y].isEditable()){
+				tipp++;
 				int prev=controller.getT().kitakart[x*9+y];
 				String betu=f[x][y].getText().toUpperCase();
 				int vart =controller.getT().nyolcvanegy[9*x+y];
@@ -382,9 +441,10 @@ public class SFrame extends JFrame {
 						return;
 					}
 				}
-				char vartC=controller.getT().getChar(vart-1);
+				
 				controller.getT().kitakart[x*9+y]=controller.getT().getINT(betu.charAt(0));
 				if(controller.getT().kitakart[x*9+y]==-1 || controller.getT().kitakart[x*9+y]!=controller.getT().nyolcvanegy[x*9+y]){					
+					rosszTipp++;
 					if(helpmode){
 						f[x][y].setBackground(Color.RED);
 					}
@@ -431,6 +491,8 @@ public class SFrame extends JFrame {
 				setBoard();
 				time=0;
 				ended=false;
+				tipp=0;
+				rosszTipp=0;
 				timer.start();
 				break;
 			case 1:

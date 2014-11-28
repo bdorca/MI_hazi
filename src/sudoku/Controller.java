@@ -11,6 +11,7 @@ public class Controller {
 	private Tabla t;
 	private int nehezseg=1;
 	
+	
 	public Controller(){
 		t=new Tabla();
 	}
@@ -100,7 +101,6 @@ public class Controller {
 
 	public void resetTabla() {
 		t.reset();
-		
 	}
 	
 	public String printINT(int[] t){
