@@ -1,11 +1,15 @@
 package sudoku;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 
 public class Controller {
 	private Tabla t;
@@ -17,11 +21,11 @@ public class Controller {
 	}
 	
 	public void initCharset(){
-		FileReader fr;
+		FileInputStream fr;
 		try {
 //			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\f�l�v#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
-			fr= new FileReader("9char.txt");
-			BufferedReader br = new BufferedReader(fr);
+			fr= new FileInputStream("9char.txt");
+			BufferedReader br = new BufferedReader( new InputStreamReader(fr,"UTF-8"));
 			Random rand = new Random();
 			int sorszam = rand.nextInt(1758);
 			for (int i = 0; i < sorszam; i++) {
@@ -33,7 +37,7 @@ public class Controller {
 			br.close();
 			fr.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

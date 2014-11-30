@@ -310,7 +310,8 @@ public class SFrame extends JFrame {
 			ArrayList<Integer> timeList=new ArrayList<Integer>();
 			ArrayList<Integer> tippList=new ArrayList<Integer>(); 
 			ArrayList<Integer> rosszTippList=new ArrayList<Integer>();
-			ArrayList<Integer> joTippList=new ArrayList<Integer>();
+			ArrayList<Date> cheatList=new ArrayList<Date>();
+
 			
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			String line;
@@ -325,21 +326,24 @@ public class SFrame extends JFrame {
     			adat=line.split(";");
     			if(Integer.parseInt(adat[0])==neh){
     				dateList.add(sdf.parse(adat[1]));
-    				System.out.println(dateList.get(dateList.size()-1));
     				timeList.add(Integer.parseInt(adat[2]));
+    				if(timeList.get(timeList.size()-1)==0){
+    					cheatList.add(dateList.get(dateList.size()-1));
+    				}
     				tippList.add(Integer.parseInt(adat[3]));
     				rosszTippList.add(Integer.parseInt(adat[4]));
-    				joTippList.add(Integer.parseInt(adat[3])-Integer.parseInt(adat[4]));
     			}
 			}
         	br.close();
         	
         	while(dateList.size()>5){
+        		if(dateList.get(0)==cheatList.get(0)){
+        			cheatList.remove(0);
+        		}
         		dateList.remove(0);
         		timeList.remove(0);
         		tippList.remove(0);
         		rosszTippList.remove(0);
-        		joTippList.remove(0);
         	}
 
         	JPanel panel=new JPanel();
@@ -353,7 +357,7 @@ public class SFrame extends JFrame {
         	series.setMarkerColor(Color.BLUE);
         	series.setMarker(SeriesMarker.CIRCLE);
         	series.setLineStyle(SeriesLineStyle.DASH_DASH);
-        	
+
         	chart1.setXAxisTitle("dátum");
         	chart1.getStyleManager().setDatePattern("MM-dd HH:mm");
         	chart1.getStyleManager().setYAxisLabelAlignment(TextAlignment.Right);
@@ -361,6 +365,16 @@ public class SFrame extends JFrame {
         	chart1.getStyleManager().setAxisTickLabelsFont(new Font("Courier", Font.PLAIN, 10));
         	 
         	chart1.getStyleManager().setPlotPadding(5);
+        	if(cheatList.size()>0){
+	        	ArrayList<Integer> nullList=new ArrayList<Integer>();
+	        	for(int i=0;i<cheatList.size();i++){
+	        		nullList.add(0);
+	        	}
+	        	series=chart1.addSeries("csalás", cheatList, nullList);
+	        	series.setMarkerColor(Color.RED);
+	        	series.setMarker(SeriesMarker.CIRCLE);
+	        	series.setLineStyle(SeriesLineStyle.NONE);
+        	}
         	
         	XChartPanel xcpanel1=new XChartPanel(chart1);
         	
@@ -373,17 +387,11 @@ public class SFrame extends JFrame {
         	series.setLineColor(new Color(0,0,255,128));
         	series.setMarkerColor(new Color(0,0,255,128));
         	
-        	series=chart2.addSeries("jó próbálkozás", dateList, joTippList);
-        	series.setFillColor(new Color(0,255,0,128));
-        	series.setLineColor(new Color(0,255,0,128));
-        	series.setMarkerColor(new Color(0,255,0,128));
-
         	series=chart2.addSeries("rossz próbálkozás", dateList, rosszTippList);
         	series.setFillColor(new Color(255,0,0,128));
         	series.setLineColor(new Color(255,0,0,128));
         	series.setMarkerColor(new Color(255,0,0,128));
 
-        	// Customize Chart
         	chart2.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
         	chart2.getStyleManager().setAxisTitlesVisible(true);
         	chart2.getStyleManager().setDatePattern("MM-dd HH:mm");
@@ -438,6 +446,7 @@ public class SFrame extends JFrame {
 					if(betu.charAt(0)!=controller.getT().getChar(prev-1)){
 						controller.getT().kitakartNum++;
 					}else{
+						tipp--;
 						return;
 					}
 				}
@@ -465,7 +474,28 @@ public class SFrame extends JFrame {
 
 		@Override
 		public void removeUpdate(DocumentEvent arg0) {
-			
+			int x=0, y=0;
+			for(int i=0;i<9;i++){
+				for(int j=0;j<9;j++){
+					if(f[i][j].getDocument()==arg0.getDocument()){
+						x=i;
+						y=j;
+					}
+				}
+			}
+			if(f[x][y].isEditable()){
+				System.out.println(controller.getT().kitakartNum);
+				System.out.println(x+" "+y+" "+controller.getT().kitakart[x*9+y]);
+				int value=x*9+y;
+
+				if(controller.getT().kitakart[value]==controller.getT().nyolcvanegy[value]){
+					controller.getT().kitakartNum++;
+				}
+				controller.getT().kitakart[value]=0;
+				if(helpmode){
+					f[x][y].setBackground(Color.WHITE);
+				}
+			}
 		}
 
 	}
@@ -502,7 +532,7 @@ public class SFrame extends JFrame {
 				break;
 			case 2:
 				if(!ended){
-					time=3598;
+					time=0;
 					solveBoard();
 					solved();
 				}
