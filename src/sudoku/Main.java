@@ -1,12 +1,5 @@
 package sudoku;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Random;
-
-import javax.swing.JFrame;
 
 public class Main {
 

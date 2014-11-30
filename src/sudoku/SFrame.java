@@ -58,7 +58,8 @@ public class SFrame extends JFrame {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 650261138298404165L;
+	
 
 	private JPanel contentPane;
 	private JTextFieldLimit f[][] = new JTextFieldLimit[9][9];
@@ -172,11 +173,11 @@ public class SFrame extends JFrame {
 		buttonPanel.add(panel, gbc_panel);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel lblLevel = new JLabel("level (1..6)");
+		JLabel lblLevel = new JLabel("level (1..5)");
 		panel.add(lblLevel);
 
 		final JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(1, 1, 6, 1));
+		spinner.setModel(new SpinnerNumberModel(1, 1, 5, 1));
 		spinner.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -516,7 +517,6 @@ public class SFrame extends JFrame {
 				controller.setNehezseg(nehezseg);
 				controller.initCharset();
 				controller.makeTabla();
-				controller.kitakarTabla();
 				System.out.println(controller.solveTabla());
 				setBoard();
 				time=0;

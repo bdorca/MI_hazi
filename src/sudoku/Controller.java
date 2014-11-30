@@ -3,13 +3,9 @@ package sudoku;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 
 public class Controller {
 	private Tabla t;
@@ -77,18 +73,21 @@ public class Controller {
 	}
 	
 	public boolean solveTabla(){
-		System.out.println("A megoldas:");
-		t.solvePuzzle(t.puzzle, 0);
-
-		boolean asd=true;
-		
-		for(int i=0;i<80;i++){
-			if(t.puzzle[i]!=t.nyolcvanegy[i]){
-				asd=false;
+		boolean megoldva=false;
+		while(!megoldva){
+			t.load81();
+			kitakarTabla();
+			System.out.println("A megoldas:");
+			t.solvePuzzle(t.puzzle, 0);	
+			megoldva=true;
+			
+			for(int i=0;i<80;i++){
+				if(t.puzzle[i]!=t.nyolcvanegy[i]){
+					megoldva=false;
+				}
 			}
 		}
-		
-		return asd;
+		return megoldva;
 	}
 	
 	public void setNehezseg(int nehezseg) {
