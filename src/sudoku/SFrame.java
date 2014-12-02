@@ -169,11 +169,11 @@ public class SFrame extends JFrame {
 		buttonPanel.add(panel, gbc_panel);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel lblLevel = new JLabel("level (1..5)");
+		JLabel lblLevel = new JLabel("level (1..6)");
 		panel.add(lblLevel);
 
 		final JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(1, 1, 5, 1));
+		spinner.setModel(new SpinnerNumberModel(1, 1, 6, 1));
 		spinner.addChangeListener(new ChangeListener() {
 
 			@Override

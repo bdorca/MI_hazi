@@ -105,7 +105,7 @@ public class Tabla {
 		return false;
 	}
 
-	public boolean checkSquare(int[] puzzle, int i) {
+	public boolean checkSquare(int[] puzzle, int i) {					///Feltolti az aktualis mezot egy lehetseges ertekkel
 		int sor = i / 9;												///A "sor" nevu valtozo az aktualis mezo 9-cel valo egesz osztasanak erteke
 		int oszlop = i % 9;												///Az "oszlop" nevu valtozo az aktualis mezo 9-es maradeka
 		int[] kilenc = new int[9];										///Egy tomb feltoltve az 1,2...9 ertekekkel
@@ -248,10 +248,10 @@ public class Tabla {
 		return true;													///Es IGAZ ertekkel visszaterunk
 	}
 
-	public boolean checkConstraints(int[] puzzle) {
+	public boolean checkConstraints(int[] puzzle) {						///Leellenorzi, hogy a tabla a szabalyoknak megfelelo-e
 		int test;
 
-		for (int sor = 0; sor < 9; sor++) {
+		for (int sor = 0; sor < 9; sor++) {								///A mi jatekunk sajatossaga, hogy a raadasul a foatloban is egyedi elemeknek kell szerepelniuk, ha ez nem teljesul, akkor mar lephetunk is vissza.
 			test = puzzle[sor * 10];
 			for (int oszlop = 0; oszlop < 9; oszlop++) {
 				if (test != 0 && oszlop != sor && test == puzzle[oszlop * 10])
@@ -259,8 +259,7 @@ public class Tabla {
 			}
 		}
 
-		// test that rows have unique values
-		for (int column = 0; column < 9; column++) {
+		for (int column = 0; column < 9; column++) {					///A kovetkezo ket ciklus leellenorzi, hogy az oszlopokban es a sorokban egyedi ertekek kerultek-e
 			for (int row = 0; row < 9; row++) {
 				test = puzzle[row + column * 9];
 				for (int j = 0; j < 9; j++) {
@@ -269,7 +268,7 @@ public class Tabla {
 				}
 			}
 		}
-		// test that columns have unique values
+
 		for (int column = 0; column < 9; column++) {
 			for (int row = 0; row < 9; row++) {
 				test = puzzle[column + row * 9];
@@ -279,24 +278,9 @@ public class Tabla {
 				}
 			}
 		}
-		// implement region test here
-		/*
-		 * int[][] regions = new int[9][9]; int[] regionIndex
-		 * ={0,3,6,27,30,33,54,57,60}; for (int region=0; region<9;region++)
-		 * //for each region {
-		 * 
-		 * int j =0; for (int k=regionIndex[region];k<regionIndex[region]+27;
-		 * k=(k%3==2?k+7:k+1)) { regions[region][j]=puzzle[k]; j++; } } for (int
-		 * i=0;i<9;i++)//region counter { for (int j=0;j<9;j++) { for (int
-		 * k=0;k<9;k++) { if
-		 * (regions[i][j]!=0&&j!=k&&regions[i][j]==regions[i][k]) return false;
-		 * }
-		 * 
-		 * } }
-		 */
-
-		for (int i = 0; i < 9; i++)// region counter
-		{
+	
+		for (int i = 0; i < 9; i++){									///Az alabbi igen bonyolultnak tuno switch-case szerkezet csupan megvizsgalja a tabla egyes 3x3-as komponenseire, hogy azok is szabalyosak-e. Lehetne rovidebben is, azonban igy szepen attekintheto
+			
 			for (int j = 0; j < 9; j++) {
 				int ertek = i * 9 + j;
 				test = puzzle[i * 9 + j];
@@ -443,7 +427,7 @@ public class Tabla {
 		return true;
 	}
 
-	public void charpuzzle() {
+	public void charpuzzle() {											///Lemasolja a lemasolni valo puzzle tablat olyanra, hogy az char elemekbol alljon, igy a jatekfeluletre kiirhato legyen
 		chpuzzle = new char[81];
 		if(konvert[0]=='0'){
 			konvert = new char[9];
@@ -464,7 +448,7 @@ public class Tabla {
 		}
 	}
 	
-	public char[] charpuzzle(int[] tomb) {
+	public char[] charpuzzle(int[] tomb) {								///Ugyanazt csinalja, mint a charpuzzle(), csak kapott tomb alapjan visszateresi ertekkel
 		char[] chtomb = new char[81];
 		if(konvert[0]=='0'){
 			konvert = new char[9];
@@ -486,11 +470,11 @@ public class Tabla {
 		return chtomb;
 	}
 
-	public char getChar(int c){
+	public char getChar(int c){											///Visszaadja a kapott szamhoz tartozo karaktert
 		return konvert[c];
 	}
 	
-	public int getINT(char c){
+	public int getINT(char c){											///Visszaadja a kapott karakterhez tartozo szamot, ha nincs, akkor -1-et
 		for(int i=0;i<9;i++){
 			if(konvert[i]==c){
 				return i+1;
@@ -500,7 +484,7 @@ public class Tabla {
 	}
 	
 	@Override
-	public String toString() {
+	public String toString() {											///A 81 elemu tomboket emesztheto formaban adja vissza (formazott String)
 		String string = "";
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -515,7 +499,7 @@ public class Tabla {
 		return string;
 	}
 
-	public void ToltPuzzle(int[] puzzle) {
+	public void ToltPuzzle(int[] puzzle) {								///A makePuzzle() szamara veletlenszeruen kitolti egy int tomb elso 9 elemet 1..9 egyedi elemekkel
 		int[] kilenc = new int[9];
 
 		for (int i = 0; i < 9; i++) {
@@ -538,12 +522,13 @@ public class Tabla {
 		}
 	}
 
-	public void reset() {
+	public void reset() {												///Visszaallitja az osszes valtozot alapallapotba
 		puzzle=new int[81];
 		kitakart=new int[81];
 		nyolcvanegy=new int[81];
 		szamlalo = 0;
 		szam = 0;
+		szam_2 = 0;
 		chpuzzle=new char[81];
 		karakterkeszlet=new char[9];
 		konvert=new char[9];
