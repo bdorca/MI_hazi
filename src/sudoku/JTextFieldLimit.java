@@ -6,13 +6,19 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-public class JTextFieldLimit extends JTextField {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6538640453215003146L;
-	private int limit;
+/**
+ * Sajat textField olsztaly, amelyben csak limitalt szamu karaktert lehet beirni
+ */
 
+public class JTextFieldLimit extends JTextField {
+
+	private static final long serialVersionUID = -6538640453215003146L;
+
+	private int limit; ///< A megadott limit
+	/**
+	 * Konstruktor
+	 * @param limit az elvart limit
+	 */
     public JTextFieldLimit(int limit) {
         super();
         this.limit = limit;

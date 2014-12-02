@@ -55,34 +55,31 @@ import com.xeiam.xchart.XChartPanel;
 
 public class SFrame extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 650261138298404165L;
-	
 
 	private JPanel contentPane;
-	private JTextFieldLimit f[][] = new JTextFieldLimit[9][9];
-	private JPanel p[][] = new JPanel[3][3];
-	private Controller controller;
-	private boolean helpmode=false;
-	private JLabel lblTime;
-	private Timer timer;
-	private int time;
-	private boolean ended=true;
-	private int nehezseg=1;
-	private int rosszTipp=0;
-	private int tipp=0;
+	private JTextFieldLimit f[][] = new JTextFieldLimit[9][9]; // /< a 81 mezo
+	private JPanel p[][] = new JPanel[3][3]; // /< 9 panel a 3x3-as tabal
+												// reszeire
+	private Controller controller; // /< a tablakat kezelo
+	private boolean helpmode = false; // /< a segito mod kapcsoloja
+	private JLabel lblTime; // /< a stopper cimkeje
+	private Timer timer; // /< timer az eltelt ido szamolasahoz
+	private int time; // /< az eltelt ido
+	private boolean ended = true; // /< a jatek veget jelzo flag
+	private int nehezseg = 1; // /< a kovetkezo jatek nehezsegi szintje
+	private int rosszTipp = 0; // /< rosszul beirt karakterek szama
+	private int tipp = 0; // /< az osszes beirt karakter
+
 	/**
-	 * Create the frame.
+	 * Az ablak, mely tartalmazza a jatektablat
+	 * 
+	 * @param c
+	 *            a jatek soran hasznalt tablat kezelo controller
 	 */
 	public SFrame(Controller c) {
 		super("Sudoku");
 		controller = c;
-		// controller.initCharset();
-		// controller.makeTabla();
-		// controller.kitakarTabla(5);
-		// System.out.println(controller.solveTabla());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
@@ -94,7 +91,7 @@ public class SFrame extends JFrame {
 		JPanel gamePanel = new JPanel();
 		contentPane.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.setLayout(new GridLayout(3, 3, 5, 5));
-		TextListener tl=new TextListener();
+		TextListener tl = new TextListener();
 
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
@@ -154,8 +151,7 @@ public class SFrame extends JFrame {
 		buttonPanel.add(btnHint, gbc_btnHint);
 
 		JButton btnSolve = new JButton("Solve");
-		
-	    
+
 		btnSolve.addActionListener(bl);
 		GridBagConstraints gbc_btnSolve = new GridBagConstraints();
 		gbc_btnSolve.insets = new Insets(0, 0, 5, 0);
@@ -182,62 +178,68 @@ public class SFrame extends JFrame {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				nehezseg=(Integer) spinner.getValue();
-				
+				nehezseg = (Integer) spinner.getValue();
+
 			}
 		});
 		panel.add(spinner);
-		
+
 		JToggleButton tglbtnHelpMe = new JToggleButton("Help ME");
 		GridBagConstraints gbc_tglbtnHelpMe = new GridBagConstraints();
-		tglbtnHelpMe.addActionListener(new ActionListener(){
+		tglbtnHelpMe.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AbstractButton abstractButton = (AbstractButton) e.getSource();
-		        helpmode = abstractButton.getModel().isSelected();
+				helpmode = abstractButton.getModel().isSelected();
 				System.out.println(helpmode);
 			}
-			
+
 		});
 		gbc_tglbtnHelpMe.gridx = 0;
 		gbc_tglbtnHelpMe.gridy = 4;
 		buttonPanel.add(tglbtnHelpMe, gbc_tglbtnHelpMe);
-		
+
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.SOUTH);
 		panel_1.setLayout(new BorderLayout(0, 0));
-		
+
 		lblTime = new JLabel("Time");
 		panel_1.add(lblTime, BorderLayout.CENTER);
-		
+
 		timer = new Timer(1000, new TimeListener());
 		timer.setInitialDelay(0);
 
 	}
 
+	/**
+	 * uj jatek eseten a tabla elemeit beallitja a kitakarasnak megfeleloen
+	 */
 	public void setBoard() {
 		char[] asd = controller.getT().charpuzzle(controller.getT().kitakart);
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
-				f[x][y].setFont(new Font("Courier", Font.BOLD,20));
+				f[x][y].setFont(new Font("Courier", Font.BOLD, 20));
 				f[x][y].setText(null);
 				f[x][y].setEditable(true);
 				f[x][y].setBackground(Color.WHITE);
 				if (asd[x * 9 + y] != '%') {
 					f[x][y].setEditable(false);
-					f[x][y].setText(String.valueOf(asd[x
-							* 9 + y]));
-					f[x][y].setBackground(new Color(220,220,220));
+					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
+					f[x][y].setBackground(new Color(220, 220, 220));
 
 				}
 			}
 		}
 	}
-	
+
+	/**
+	 * solve gomb megnyomasa utan a tabla meg kitoltetlen elemeit kitolti
+	 */
 	public void solveBoard() {
-		char[] asd = controller.getT().charpuzzle(controller.getT().nyolcvanegy);
+		char[] asd = controller.getT()
+				.charpuzzle(controller.getT().nyolcvanegy);
 		controller.getT().kitakart = controller.getT().nyolcvanegy.clone();
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
@@ -248,162 +250,197 @@ public class SFrame extends JFrame {
 				}
 			}
 		}
-		controller.getT().kitakartNum=0;
+		controller.getT().kitakartNum = 0;
 	}
-	
-	public void hintBoard(){
-		if(controller.getT().kitakartNum<=0){ 
+
+	/**
+	 * hint gomb megnyomasa utan egy veletlenszeru kitoltetlen mezot kitolt
+	 */
+	public void hintBoard() {
+		if (controller.getT().kitakartNum <= 0) {
 			solved();
 			return;
 		}
 		int value = 0;
 		Random rand = new Random();
 		value = rand.nextInt(81);
-		while(controller.getT().kitakart[value] > 0 && controller.getT().kitakart[value]==controller.getT().nyolcvanegy[value]){
+		while (controller.getT().kitakart[value] > 0
+				&& controller.getT().kitakart[value] == controller.getT().nyolcvanegy[value]) {
 			value = rand.nextInt(81);
 		}
-		int ertek=controller.getT().nyolcvanegy[value];
+		int ertek = controller.getT().nyolcvanegy[value];
 
-		time+=60;		
-		
-		f[value/9][value%9].setText(String.valueOf(controller.getT().getChar(ertek-1)));
-		f[value/9][value%9].setEditable(false);
-		f[value/9][value%9].setBackground(new Color(66,213,229));
-		
-		controller.getT().kitakart[value]=controller.getT().nyolcvanegy[value];
+		time += 60;
+
+		f[value / 9][value % 9].setText(String.valueOf(controller.getT()
+				.getChar(ertek - 1)));
+		f[value / 9][value % 9].setEditable(false);
+		f[value / 9][value % 9].setBackground(new Color(66, 213, 229));
+
+		controller.getT().kitakart[value] = controller.getT().nyolcvanegy[value];
 	}
 
-	public void solved(){
-		ended=true;
+	/**
+	 * ha a jatek vegetert, minden mezot kitoltottunk, a scores fajlba beleirja
+	 * az aktualis eredmeny es a generalt diagramokatkirajzolja egy uj ablakba
+	 * (JOptionPane)
+	 */
+	public void solved() {
+		ended = true;
 		timer.stop();
-		
-		File f=new File("scores.txt");
+
+		File f = new File("scores.txt");
 		try {
-			
-		    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
-		    String now=new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
-		    System.out.println(now+" "+new Date());
-		    out.println(controller.getNehezseg()+";"+now+";"+time+";"+tipp+";"+rosszTipp);
-		    out.close();
+
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(f, true)));
+			String now = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+					.format(new Date());
+			System.out.println(now + " " + new Date());
+			out.println(controller.getNehezseg() + ";" + now + ";" + time + ";"
+					+ tipp + ";" + rosszTipp);
+			out.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
-		
-		JPanel xcpanel=drawChart(f);
-		JPanel p=new JPanel();
-		p.setLayout(new BorderLayout());
-		JLabel label=new JLabel(String.format("Ön nyert! ideje: %02d:%02d", time/60,time%60));
-		label.setFont(new Font("Courier", Font.BOLD,20));
 
-		p.add(label,BorderLayout.NORTH);
-		p.add(xcpanel,BorderLayout.CENTER);
-		JOptionPane.showMessageDialog(this,p,"WIN" , JOptionPane.PLAIN_MESSAGE);
-		
+		JPanel xcpanel = drawChart(f);
+		JPanel p = new JPanel();
+		p.setLayout(new BorderLayout());
+		JLabel label = new JLabel(String.format("Ön nyert! ideje: %02d:%02d",
+				time / 60, time % 60));
+		label.setFont(new Font("Courier", Font.BOLD, 20));
+
+		p.add(label, BorderLayout.NORTH);
+		p.add(xcpanel, BorderLayout.CENTER);
+		JOptionPane
+				.showMessageDialog(this, p, "WIN", JOptionPane.PLAIN_MESSAGE);
+
 	}
-	
-	public JPanel drawChart(File f){
+
+	/**
+	 * A parameterkent kapott filet beolvassa, az utolso 5 adatbol diagramot
+	 * general. Az elso diagram a datumok es az adott szint megoldasi idejei
+	 * (masodpercben) alapjan keszul, a solve gomb segitsegevel megoldottak 0
+	 * értékkel és piros jelolovel kerulnek kirajzolasra. A masodik diagram a
+	 * datumokat a probalkozasok szamat abrazolja.
+	 * 
+	 * @param f
+	 *            az adatokat tartalmazo fajl
+	 * @return a kirajzolando diagramokat tartalmazo JPanel
+	 */
+	public JPanel drawChart(File f) {
 		FileReader fr;
 		try {
 			fr = new FileReader(f);
-			BufferedReader br=new BufferedReader(fr);
-			
-			ArrayList<Date> dateList=new ArrayList<Date>();
-			ArrayList<Integer> timeList=new ArrayList<Integer>();
-			ArrayList<Integer> tippList=new ArrayList<Integer>(); 
-			ArrayList<Integer> rosszTippList=new ArrayList<Integer>();
-			ArrayList<Date> cheatList=new ArrayList<Date>();
+			BufferedReader br = new BufferedReader(fr);
 
-			
+			ArrayList<Date> dateList = new ArrayList<Date>();
+			ArrayList<Integer> timeList = new ArrayList<Integer>();
+			ArrayList<Integer> tippList = new ArrayList<Integer>();
+			ArrayList<Integer> rosszTippList = new ArrayList<Integer>();
+			ArrayList<Date> cheatList = new ArrayList<Date>();
+
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			String line;
 			String[] adat;
-			int neh=controller.getNehezseg();
-			
-        	while (true) {
-    			line = br.readLine();
-    			if (line == null){
-    				break;
-    			}
-    			adat=line.split(";");
-    			if(Integer.parseInt(adat[0])==neh){
-    				dateList.add(sdf.parse(adat[1]));
-    				timeList.add(Integer.parseInt(adat[2]));
-    				if(timeList.get(timeList.size()-1)==0){
-    					cheatList.add(dateList.get(dateList.size()-1));
-    				}
-    				tippList.add(Integer.parseInt(adat[3]));
-    				rosszTippList.add(Integer.parseInt(adat[4]));
-    			}
+			int neh = controller.getNehezseg();
+
+			while (true) {
+				line = br.readLine();
+				if (line == null) {
+					break;
+				}
+				adat = line.split(";");
+				if (Integer.parseInt(adat[0]) == neh) {
+					dateList.add(sdf.parse(adat[1]));
+					timeList.add(Integer.parseInt(adat[2]));
+					if (timeList.get(timeList.size() - 1) == 0) {
+						cheatList.add(dateList.get(dateList.size() - 1));
+					}
+					tippList.add(Integer.parseInt(adat[3]));
+					rosszTippList.add(Integer.parseInt(adat[4]));
+				}
 			}
-        	br.close();
-        	
-        	while(dateList.size()>5){
-        		if(dateList.get(0)==cheatList.get(0)){
-        			cheatList.remove(0);
-        		}
-        		dateList.remove(0);
-        		timeList.remove(0);
-        		tippList.remove(0);
-        		rosszTippList.remove(0);
-        	}
+			br.close();
 
-        	JPanel panel=new JPanel();
-        	panel.setLayout(new BorderLayout());
-        	
-        	Chart chart1 = new ChartBuilder().width(600).height(250).title(neh+". szint legutóbbi játékainak eredménye").build();
-        	chart1.getStyleManager().setLegendVisible(false);
-        	Series series=chart1.addSeries("megfejtés ideje", dateList, timeList);
-        	
-        	series.setLineColor(SeriesColor.BLUE);
-        	series.setMarkerColor(Color.BLUE);
-        	series.setMarker(SeriesMarker.CIRCLE);
-        	series.setLineStyle(SeriesLineStyle.DASH_DASH);
+			while (dateList.size() > 5) {
+				if (dateList.get(0) == cheatList.get(0)) {
+					cheatList.remove(0);
+				}
+				dateList.remove(0);
+				timeList.remove(0);
+				tippList.remove(0);
+				rosszTippList.remove(0);
+			}
 
-        	chart1.setXAxisTitle("dátum");
-        	chart1.getStyleManager().setDatePattern("MM-dd HH:mm");
-        	chart1.getStyleManager().setYAxisLabelAlignment(TextAlignment.Right);
-        	chart1.setYAxisTitle("megfejtés ideje [sec]");
-        	chart1.getStyleManager().setAxisTickLabelsFont(new Font("Courier", Font.PLAIN, 10));
-        	 
-        	chart1.getStyleManager().setPlotPadding(5);
-        	if(cheatList.size()>0){
-	        	ArrayList<Integer> nullList=new ArrayList<Integer>();
-	        	for(int i=0;i<cheatList.size();i++){
-	        		nullList.add(0);
-	        	}
-	        	series=chart1.addSeries("csalás", cheatList, nullList);
-	        	series.setMarkerColor(Color.RED);
-	        	series.setMarker(SeriesMarker.CIRCLE);
-	        	series.setLineStyle(SeriesLineStyle.NONE);
-        	}
-        	
-        	XChartPanel xcpanel1=new XChartPanel(chart1);
-        	
-        	panel.add(xcpanel1,BorderLayout.NORTH);
-        	
-        	Chart chart2 = new ChartBuilder().chartType(ChartType.Area).width(600).height(250).title(neh+". szint próbálkozások száma").xAxisTitle("dátum").yAxisTitle("db").build();
-        	
-        	series=chart2.addSeries("összes próbálkozás", dateList, tippList);
-        	series.setFillColor(new Color(0,0,255,128));
-        	series.setLineColor(new Color(0,0,255,128));
-        	series.setMarkerColor(new Color(0,0,255,128));
-        	
-        	series=chart2.addSeries("rossz próbálkozás", dateList, rosszTippList);
-        	series.setFillColor(new Color(255,0,0,128));
-        	series.setLineColor(new Color(255,0,0,128));
-        	series.setMarkerColor(new Color(255,0,0,128));
+			JPanel panel = new JPanel();
+			panel.setLayout(new BorderLayout());
 
-        	chart2.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
-        	chart2.getStyleManager().setAxisTitlesVisible(true);
-        	chart2.getStyleManager().setDatePattern("MM-dd HH:mm");
-        	chart2.getStyleManager().setAxisTickLabelsFont(new Font("Courier", Font.PLAIN, 10));
-        	
-        	XChartPanel xcpanel2=new XChartPanel(chart2);
-        	
-        	panel.add(xcpanel2, BorderLayout.SOUTH);
-        	
-        	return panel;
-        	
+			Chart chart1 = new ChartBuilder().width(600).height(250)
+					.title(neh + ". szint legutóbbi játékainak eredménye")
+					.build();
+			chart1.getStyleManager().setLegendVisible(false);
+			Series series = chart1.addSeries("megfejtés ideje", dateList,
+					timeList);
+
+			series.setLineColor(SeriesColor.BLUE);
+			series.setMarkerColor(Color.BLUE);
+			series.setMarker(SeriesMarker.CIRCLE);
+			series.setLineStyle(SeriesLineStyle.DASH_DASH);
+
+			chart1.setXAxisTitle("dátum");
+			chart1.getStyleManager().setDatePattern("MM-dd HH:mm");
+			chart1.getStyleManager()
+					.setYAxisLabelAlignment(TextAlignment.Right);
+			chart1.setYAxisTitle("megfejtés ideje [sec]");
+			chart1.getStyleManager().setAxisTickLabelsFont(
+					new Font("Courier", Font.PLAIN, 10));
+
+			chart1.getStyleManager().setPlotPadding(5);
+			if (cheatList.size() > 0) {
+				ArrayList<Integer> nullList = new ArrayList<Integer>();
+				for (int i = 0; i < cheatList.size(); i++) {
+					nullList.add(0);
+				}
+				series = chart1.addSeries("csalás", cheatList, nullList);
+				series.setMarkerColor(Color.RED);
+				series.setMarker(SeriesMarker.CIRCLE);
+				series.setLineStyle(SeriesLineStyle.NONE);
+			}
+
+			XChartPanel xcpanel1 = new XChartPanel(chart1);
+
+			panel.add(xcpanel1, BorderLayout.NORTH);
+
+			Chart chart2 = new ChartBuilder().chartType(ChartType.Area)
+					.width(600).height(250)
+					.title(neh + ". szint próbálkozások száma")
+					.xAxisTitle("dátum").yAxisTitle("db").build();
+
+			series = chart2.addSeries("összes próbálkozás", dateList, tippList);
+			series.setFillColor(new Color(0, 0, 255, 128));
+			series.setLineColor(new Color(0, 0, 255, 128));
+			series.setMarkerColor(new Color(0, 0, 255, 128));
+
+			series = chart2.addSeries("rossz próbálkozás", dateList,
+					rosszTippList);
+			series.setFillColor(new Color(255, 0, 0, 128));
+			series.setLineColor(new Color(255, 0, 0, 128));
+			series.setMarkerColor(new Color(255, 0, 0, 128));
+
+			chart2.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
+			chart2.getStyleManager().setAxisTitlesVisible(true);
+			chart2.getStyleManager().setDatePattern("MM-dd HH:mm");
+			chart2.getStyleManager().setAxisTickLabelsFont(
+					new Font("Courier", Font.PLAIN, 10));
+
+			XChartPanel xcpanel2 = new XChartPanel(chart2);
+
+			panel.add(xcpanel2, BorderLayout.SOUTH);
+
+			return panel;
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -414,101 +451,138 @@ public class SFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
+	/**
+	 * A mezok esemenykezeloje.
+	 */
 	public class TextListener implements DocumentListener {
 
 		@Override
 		public void changedUpdate(DocumentEvent arg0) {
-			
+
 		}
 
+		/**
+		 * Amikor uj ertek kerul beirasra valamelyik mezobe, akkor megkeresi,
+		 * hogy melyik mezorol van szo, amennyiben ez a mezo nem szerkesztheto,
+		 * ugy nem foglalkozik vele. A szerkesztheto mezok eseten megnezi, hogy
+		 * a beirt karakter megfelelo-e. Ha megfelelo, akkor a tabla kitakartNum
+		 * szamlalojat csokkenti es segito modban a hatteret zoldre cserele. Ha
+		 * nem megfelelo a karakter, akkor piros lesz a mezo es nem valtozik a
+		 * kitakart mezok szama. Amennyiben a kitart mezok szam eleri a 0-t, ugy
+		 * meghivodi a solved() fuggveny.
+		 */
 		@Override
 		public void insertUpdate(DocumentEvent arg0) {
-			int x=0;
-			int y=0;
-			
-			for(int i=0;i<9;i++){
-				for(int j=0;j<9;j++){
-					if(f[i][j].getDocument()==arg0.getDocument()){
-						x=i;
-						y=j;
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					if (f[i][j].getDocument() == arg0.getDocument()) {
+						x = i;
+						y = j;
 					}
 				}
 			}
-			if(f[x][y].isEditable()){
+			if (f[x][y].isEditable()) {
 				tipp++;
-				int prev=controller.getT().kitakart[x*9+y];
-				String betu=f[x][y].getText().toUpperCase();
-				int vart =controller.getT().nyolcvanegy[9*x+y];
-				if(prev==vart){
-					if(betu.charAt(0)!=controller.getT().getChar(prev-1)){
+				int prev = controller.getT().kitakart[x * 9 + y];
+				String betu = f[x][y].getText().toUpperCase();
+				int vart = controller.getT().nyolcvanegy[9 * x + y];
+				if (prev == vart) {
+					if (betu.charAt(0) != controller.getT().getChar(prev - 1)) {
 						controller.getT().kitakartNum++;
-					}else{
+					} else {
 						tipp--;
 						return;
 					}
 				}
-				
-				controller.getT().kitakart[x*9+y]=controller.getT().getINT(betu.charAt(0));
-				if(controller.getT().kitakart[x*9+y]==-1 || controller.getT().kitakart[x*9+y]!=controller.getT().nyolcvanegy[x*9+y]){					
+
+				controller.getT().kitakart[x * 9 + y] = controller.getT()
+						.getINT(betu.charAt(0));
+				if (controller.getT().kitakart[x * 9 + y] == -1
+						|| controller.getT().kitakart[x * 9 + y] != controller
+								.getT().nyolcvanegy[x * 9 + y]) {
 					rosszTipp++;
-					if(helpmode){
+					if (helpmode) {
 						f[x][y].setBackground(Color.RED);
 					}
-				}else{
+				} else {
 					controller.getT().kitakartNum--;
-					if(helpmode){
+					if (helpmode) {
 						f[x][y].setBackground(Color.GREEN);
 					}
 				}
 				System.out.println(controller.getT().kitakartNum);
-				System.out.println(x+" "+y+" "+betu+" "+controller.getT().kitakart[x*9+y]);
-				//System.out.println(controller.printINT(controller.getT().kitakart));
+				System.out.println(x + " " + y + " " + betu + " "
+						+ controller.getT().kitakart[x * 9 + y]);
+				// System.out.println(controller.printINT(controller.getT().kitakart));
 			}
-			if(controller.getT().kitakartNum==0){
+			if (controller.getT().kitakartNum == 0) {
 				solved();
 			}
 		}
 
+		/**
+		 * Karakter kitorlese eseten, hasonloan az elozo fuggvenyhez megkeresi a
+		 * mezot. Ha az ertek elozoleg jo volt, akkor a kitart mezok szamat
+		 * noveli, ha nem volt jo, akkor valtozatlan marad. A mezo erteket
+		 * kinullazza. Segito modban visszaallitja a hatterszint.
+		 */
 		@Override
 		public void removeUpdate(DocumentEvent arg0) {
-			int x=0, y=0;
-			for(int i=0;i<9;i++){
-				for(int j=0;j<9;j++){
-					if(f[i][j].getDocument()==arg0.getDocument()){
-						x=i;
-						y=j;
+			int x = 0, y = 0;
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					if (f[i][j].getDocument() == arg0.getDocument()) {
+						x = i;
+						y = j;
 					}
 				}
 			}
-			if(f[x][y].isEditable()){
+			if (f[x][y].isEditable()) {
 				System.out.println(controller.getT().kitakartNum);
-				System.out.println(x+" "+y+" "+controller.getT().kitakart[x*9+y]);
-				int value=x*9+y;
+				System.out.println(x + " " + y + " "
+						+ controller.getT().kitakart[x * 9 + y]);
+				int value = x * 9 + y;
 
-				if(controller.getT().kitakart[value]==controller.getT().nyolcvanegy[value]){
+				if (controller.getT().kitakart[value] == controller.getT().nyolcvanegy[value]) {
 					controller.getT().kitakartNum++;
 				}
-				controller.getT().kitakart[value]=0;
-				if(helpmode){
+				controller.getT().kitakart[value] = 0;
+				if (helpmode) {
 					f[x][y].setBackground(Color.WHITE);
 				}
 			}
 		}
 
 	}
-	public class BtnListener implements ActionListener {
 
+	/**
+	 * A gombok (New Game, Hint, Solve) esemeny kezeloje.
+	 * 
+	 */
+	public class BtnListener implements ActionListener {
+		/**
+		 * New Game - Visszaallitja a tablat, beallitja a nehezseget generaltat
+		 * egy uj tabla es elinditja a stoppert Hint - Ha meg nem ert veget a
+		 * jatek, akkor kitolt egy mezot Solve - Kitolti a tablat es az idot
+		 * 0-ra allitja
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int z = 0;
 			String str = e.getActionCommand();
-			if(str.equals("New Game")) z = 0;
-			if(str.equals("Hint")) z = 1;
-			if(str.equals("Solve")) z = 2;
+			if (str.equals("New Game"))
+				z = 0;
+			if (str.equals("Hint"))
+				z = 1;
+			if (str.equals("Solve"))
+				z = 2;
 
 			switch (z) {
 			case 0:
@@ -519,20 +593,20 @@ public class SFrame extends JFrame {
 				controller.makeTabla();
 				System.out.println(controller.solveTabla());
 				setBoard();
-				time=0;
-				ended=false;
-				tipp=0;
-				rosszTipp=0;
+				time = 0;
+				ended = false;
+				tipp = 0;
+				rosszTipp = 0;
 				timer.start();
 				break;
 			case 1:
-				if(!ended){
+				if (!ended) {
 					hintBoard();
 				}
 				break;
 			case 2:
-				if(!ended){
-					time=0;
+				if (!ended) {
+					time = 0;
 					solveBoard();
 					solved();
 				}
@@ -541,19 +615,24 @@ public class SFrame extends JFrame {
 		}
 
 	}
-	
-	private class TimeListener implements ActionListener{
+
+	/**
+	 * Az ido esemenykezeloje Masodpercenkent eggyel noveli a time valtozo
+	 * erteket (segito modban kettovel) es kiirja a kepernyore a megfelelo
+	 * cimkere
+	 */
+	private class TimeListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			time++;
-			if(helpmode){
+			if (helpmode) {
 				time++;
 			}
-			String t=String.format("%02d:%02d", time/60, time%60 );
+			String t = String.format("%02d:%02d", time / 60, time % 60);
 			lblTime.setText(t);
 		}
-		
+
 	}
 }
