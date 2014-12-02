@@ -7,21 +7,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
+/**
+ * Controller osztaly, a jatektabla kezelesere
+ */
 public class Controller {
 	private Tabla t;
-	private int nehezseg=1;
-	
-	
-	public Controller(){
-		t=new Tabla();
+	private int nehezseg = 1;
+
+	/**
+	 * Konstruktor, letrehozza a tablat
+	 */
+	public Controller() {
+		t = new Tabla();
 	}
-	
-	public void initCharset(){
+
+	/**
+	 * A szolistabol random valaszt egy sort es ennek a karaktereibol allitja
+	 * elo a tabla karakterkeszletet
+	 */
+	public void initCharset() {
 		FileInputStream fr;
 		try {
-			fr = new FileInputStream("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\9char.txt");
-//			fr= new FileInputStream("9char.txt");
-			BufferedReader br = new BufferedReader( new InputStreamReader(fr,"UTF-8"));
+			// fr = new
+			// FileInputStream("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\9char.txt");
+			fr = new FileInputStream("9char.txt");
+			BufferedReader br = new BufferedReader(new InputStreamReader(fr,
+					"UTF-8"));
 			Random rand = new Random();
 			int sorszam = rand.nextInt(1758);
 			for (int i = 0; i < sorszam; i++) {
@@ -33,30 +44,39 @@ public class Controller {
 			br.close();
 			fr.close();
 		} catch (FileNotFoundException e) {
-			
+
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public void makeTabla(){
+
+	/**
+	 * Tablat letrehozo fuggveny. Feltolti a tabla elso sorat, majd feltolti a
+	 * tobbit is, amig nem kap szabalyos tablat, addig ismetli ezeket a
+	 * lepeseket. A kesz tabla elemeit elmenti a Tabla nyolcvanegy tombjebe.
+	 */
+	public void makeTabla() {
 		t.ToltPuzzle(t.puzzle);
 		while (!(t.makePuzzle(t.puzzle, 0))) {
-			for (int i = 0; i < 10; i++) {
-				System.out
-						.println("HEUREEEEEEEEEEEEEEEEEEEEEKAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!!44");
-			}
 			t.szam = 0;
 			t.ToltPuzzle(t.puzzle);
 		}
 		t.save81();
 	}
-	
-	public void kitakarTabla(){
-		t.kitakartNum=0;
-		for (int i = 0; i < (nehezseg * 10 + 1); i++) { // Az, hogy hány számot távolítsunk el (ha mindig mást generál a két random)
+
+	/**
+	 * Nehezsegnek megfelelo szamu mezot kitakar. Valaszt egy random sor-oszlop
+	 * parost, ha az erteke mar 0, akkor addig uj paros valaszt, kinullazza az
+	 * erteket es a kitakart mezok szamat eggyel noveli.
+	 */
+	public void kitakarTabla() {
+		t.kitakartNum = 0;
+		for (int i = 0; i < (nehezseg * 10 + 1); i++) { // Az, hogy hány számot
+														// távolítsunk el (ha
+														// mindig mást generál a
+														// két random)
 			Random rand = new Random();
 			int value = rand.nextInt(9);
 			int value_2 = rand.nextInt(9);
@@ -67,56 +87,79 @@ public class Controller {
 			t.puzzle[value * 9 + value_2] = 0;
 			t.kitakartNum++;
 		}
-		t.kitakart =t.puzzle.clone();
+		t.kitakart = t.puzzle.clone();
 		t.charpuzzle();
 		System.out.println("\n" + t.toString() + "\n");
 	}
-	
-	public boolean solveTabla(){
-		boolean megoldva=false;
-		while(!megoldva){
+
+	/**
+	 * Megoldo fuggveny. Betolti a generalt tablat es kitakartatja az elemeket.
+	 * Megoldja ezt, ha nem jar sikerrel, akkor uj kitakarast alkalmaz.
+	 * 
+	 * @return
+	 */
+	public boolean solveTabla() {
+		boolean megoldva = false;
+		while (!megoldva) {
 			t.load81();
 			kitakarTabla();
 			System.out.println("A megoldas:");
-			
-			while(!(t.solvePuzzle(t.puzzle, 0))){
+
+			while (!(t.solvePuzzle(t.puzzle, 0))) {
 				t.szam_2 = 0;
 				t.load81();
 			}
-			
-			megoldva=true;
-			
-			for(int i=0;i<80;i++){
-				if(t.puzzle[i]!=t.nyolcvanegy[i]){
-					megoldva=false;
+
+			megoldva = true;
+
+			for (int i = 0; i < 80; i++) {
+				if (t.puzzle[i] != t.nyolcvanegy[i]) {
+					megoldva = false;
 				}
 			}
 		}
 		return megoldva;
 	}
-	
+
+	/**
+	 * Beallitja a nehezseget
+	 * @param nehezseg a beallitando nehezseg
+	 */
 	public void setNehezseg(int nehezseg) {
 		this.nehezseg = nehezseg;
 	}
-	
+	/**
+	 * Visszaadja a nehezseget
+	 * @return a nehezseg
+	 */
 	public int getNehezseg() {
 		return nehezseg;
 	}
-	
+	/**
+	 * 
+	 * @return a tabla
+	 */
 	public Tabla getT() {
 		return t;
 	}
-
+	/**
+	 * Visszaallitja a tablat az alapallapotaba
+	 */
 	public void resetTabla() {
 		t.reset();
 	}
 	
-	public String printINT(int[] t){
-		String str=new String();
-		for(int i=0;i<t.length;i++){
-			str+=t[i]+" ";
-			if(i%8==0){
-				str+="\n";
+	/**
+	 * A parameterben kapott int tombot visszaadja emesztheto formatumban 
+	 * @param t stringge alakitando tomb
+	 * @return a tomb emesztheto formatumban
+	 */
+	public String printINT(int[] t) {
+		String str = new String();
+		for (int i = 0; i < t.length; i++) {
+			str += t[i] + " ";
+			if (i % 8 == 0) {
+				str += "\n";
 			}
 		}
 		return str;

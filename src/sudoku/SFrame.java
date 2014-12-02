@@ -219,16 +219,17 @@ public class SFrame extends JFrame {
 		char[] asd = controller.getT().charpuzzle(controller.getT().kitakart);
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
+				f[x][y].setEditable(false);
 				f[x][y].setHorizontalAlignment(JTextField.CENTER);
 				f[x][y].setFont(new Font("Courier", Font.BOLD, 20));
 				f[x][y].setText(null);
-				f[x][y].setEditable(true);
 				f[x][y].setBackground(Color.WHITE);
 				if (asd[x * 9 + y] != '%') {
-					f[x][y].setEditable(false);
 					f[x][y].setText(String.valueOf(asd[x * 9 + y]));
 					f[x][y].setBackground(new Color(220, 220, 220));
 
+				}else{
+					f[x][y].setEditable(true);
 				}
 			}
 		}
