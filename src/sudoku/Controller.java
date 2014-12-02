@@ -19,8 +19,8 @@ public class Controller {
 	public void initCharset(){
 		FileInputStream fr;
 		try {
-//			fr = new FileReader("C:\\Users\\Legoo\\Desktop\\f�l�v#5\\MI\\sudoku\\MI_hazi\\src\\9char.txt");
-			fr= new FileInputStream("9char.txt");
+			fr = new FileInputStream("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\9char.txt");
+//			fr= new FileInputStream("9char.txt");
 			BufferedReader br = new BufferedReader( new InputStreamReader(fr,"UTF-8"));
 			Random rand = new Random();
 			int sorszam = rand.nextInt(1758);
@@ -78,7 +78,12 @@ public class Controller {
 			t.load81();
 			kitakarTabla();
 			System.out.println("A megoldas:");
-			t.solvePuzzle(t.puzzle, 0);	
+			
+			while(!(t.solvePuzzle(t.puzzle, 0))){
+				t.szam_2 = 0;
+				t.load81();
+			}
+			
 			megoldva=true;
 			
 			for(int i=0;i<80;i++){

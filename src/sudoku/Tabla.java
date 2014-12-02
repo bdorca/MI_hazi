@@ -9,6 +9,7 @@ public class Tabla {
 	public int[] nyolcvanegy;
 	public int szamlalo = 0;
 	public int szam = 0;
+	public int szam_2 = 0;
 	public char[] chpuzzle;
 	public static char[] karakterkeszlet;
 	public char[] konvert;
@@ -20,124 +21,110 @@ public class Tabla {
 		nyolcvanegy = new int[81];
 		konvert=new char[9];
 		Arrays.fill(konvert, '0');
-
 	}
 
-	public void save81() {
+	public void save81() {												///Elmenti a legeneralt puzzle tomb allasat egy masik tombbe
 		for (int i = 0; i < 81; i++) {
 			nyolcvanegy[i] = puzzle[i];
 		}
 	}
 
-	public void load81() {
+	public void load81() {  											///Lemasolja az egyik tombot, hogy ujra az eredeti allas keruljon a puzzle tombbe
 		for (int i = 0; i < 81; i++) {
 			puzzle[i] = nyolcvanegy[i];
 		}
 	}
 
-	public boolean makePuzzle(int[] puzzle, int i) {
+	public boolean makePuzzle(int[] puzzle, int i) {					///Letrehoz egy szabalyos tablat szamokkal	
+		
 		szam++;
-		System.out.println(szam);
-		if (szam > 1000) {
-			System.out.println("shit.");
-			return false;
+		
+		if (szam > 1000) { 												///ha tobb mint 1000-szer hivtuk a rekurziot, akkor kilepunk, es ujrahivjuk, hogy gyorsitsuk a generalast
+			return false; 
 		}
-
-		for (int x = 1; x < 10; x++) {
-			if (puzzle[i] != 0) {
+		
+		for (int x = 1; x < 10; x++) {									///belepunk egy ciklusba mely majd a feltoltesben segedkezik
+			
+		if (puzzle[i] != 0) {											///ha a kapott indexu elem nem nulla, akkor tovabblepunk a kovetkezo elemre 
 				if (makePuzzle(puzzle, i + 1))
 					return true;
 
 			} else {
-				puzzle[i] = x;
-				if (checkConstraints(puzzle)) {
-					if (i > 79)// terminal condition
+				puzzle[i] = x;											///ha nulla az i. helyen levo elem, akkor ertekul adjuk neki az aktualis elemet a ciklusnak
+				if (checkConstraints(puzzle)) {							///megnezzuk, hogy az adott helyre illesztett elem szabalyos-e ott							
+					if (i > 79)											///ha igen, es az index 79-nel nagyobb, akkor keszen vagyunk
 					{
-						charpuzzle();
-						System.out.println(this);// print out the completed
-													// puzzle
-						return true;
+						charpuzzle();									///szabadon legeneralhatjuk a betuket tartalmazo tombot
+					return true;										///es visszaterunk IGAZ ertekkel
 					} else if (makePuzzle(puzzle, i + 1))
-						return true;// find a number for the next square
+						return true;									///ha meg nem ertuk el a 80. indexet, akkor tovabblepunk a kovetkezo elemre
 
 				}
-				puzzle[i] = 0;// this try didn't work, delete the evidence
+				puzzle[i] = 0;											///ha pedig az ellenorzes soran kiderult, hogy a beirt ertek nem jo, kitoroljuk es probaljuk a kovetkezot
 			}
 		}
 		return false;
 	}
 
-	public boolean solvePuzzle(int[] puzzle, int i) {
-
+	public boolean solvePuzzle(int[] puzzle, int i) {					///Megprobal megoldani egy szabalyos tablat kitakart elemekkel
+		szam_2++;
+		
+		if(szam_2 > 1000){												///Ha ezer iteracional tartunk mar, akkor ujrafuttatjuk az egeszet az eredeti ertekekkel
+			return false;
+		}
 		boolean check = true;
 
-		for (int j = 0; j < 81; j++) {
+		for (int j = 0; j < 81; j++) { 									///megnezzuk, hogy vegeztunk-e
 			if (puzzle[j] == 0)
 				check = false;
 		}
 
-		if (check) {
+		if (check) {													///ha igen, akkor kiirjuk es visszaterunk es atalakitjuk a tombot
 			charpuzzle();
-			System.out.println(this);
 			return true;
 		}
 
-		if (puzzle[i] != 0) {
+		if (puzzle[i] != 0) {											///ha az adott elem nem nulla
 			if (i < 80) {
 				if (solvePuzzle(puzzle, i + 1))
-					return true;// find a number for the next square
+					return true;										/// megvizsgaljuk, hogy van-e meg hely a tombben, ha igen akkor meghivjuk a kovetkezo elemre, mert nincs dolgunk vele
 			} else {
 				if (solvePuzzle(puzzle, 0))
-					return true;// find a number for the next square
+					return true;										/// ha a vegere ertunk, akkor meghivjuk elolrol a megoldo fuggvenyt
 			}
-		} else if (!(checkSquare(puzzle, i))) {
+		} else { 														
+			checkSquare(puzzle,i);										///behelyettesitjuk az aktualis helyre az egyik lehetseges elemet
 			if (i < 80) {
 				if (solvePuzzle(puzzle, i + 1))
-					return true;// find a number for the next square
+					return true;										/// megvizsgaljuk, hogy van-e meg hely a tombben, ha igen akkor meghivjuk a kovetkezo elemre, mert nincs dolgunk vele
 			} else {
-				if (solvePuzzle(puzzle, 0))
-					return true;// find a number for the next square
-			}
-		} else {
-
-			for (int x = 1; x < 10; x++) {
-
-				puzzle[i] = x;
-				if (checkConstraints(puzzle)) {
-					if (i < 80) {
-						if (solvePuzzle(puzzle, i + 1))
-							return true;// find a number for the next square
-					} else {
-						if (solvePuzzle(puzzle, 0))
-							return true;// find a number for the next square
-					}
-				}
-				puzzle[i] = 0;// this try didn't work, delete the evidence
+				if (solvePuzzle(puzzle, 0))			
+					return true;										/// ha a vegere ertunk, akkor meghivjuk elolrol a megoldo fuggvenyt
 			}
 		}
 		return false;
 	}
 
 	public boolean checkSquare(int[] puzzle, int i) {
-		int sor = i / 9;
-		int oszlop = i % 9;
-		int[] kilenc = new int[9];
-		for (int j = 0; j < 9; j++) {
+		int sor = i / 9;												///A "sor" nevu valtozo az aktualis mezo 9-cel valo egesz osztasanak erteke
+		int oszlop = i % 9;												///Az "oszlop" nevu valtozo az aktualis mezo 9-es maradeka
+		int[] kilenc = new int[9];										///Egy tomb feltoltve az 1,2...9 ertekekkel
+		for (int j = 0; j < 9; j++) {									///A tomb feltoltese
 			kilenc[j] = j + 1;
 		}
 
-		for (int j = 0; j < 9; j++) {
+		for (int j = 0; j < 9; j++) {									///Kivesszuk az 1,2...9 ertekekkel feltoltott tombbol azokat az elemeket, amik szerepelnek az aktualis mezo soraban
 			if (puzzle[sor * 9 + j] != 0) {
 				kilenc[puzzle[sor * 9 + j] - 1] = -1;
 			}
 		}
-		for (int j = 0; j < 9; j++) {
+		for (int j = 0; j < 9; j++) {									///Kivesszuk az 1,2...9 ertekekkel feltoltott tombbol azokat az elemeket, amik szerepelnek az aktualis mezo oszlopaban
 			if (puzzle[j * 9 + oszlop] != 0) {
 				kilenc[puzzle[j * 9 + oszlop] - 1] = -1;
 			}
 		}
 
-		switch (i) {
+		switch (i) {													///Ez a switch-case szerkezet pedig az aktualis mezohoz tartozo 3x3-as teruletet vizsgalja a tablaban. Szinten kiveszi a "kilenc" tombbol azokat az elemeket, amik szerepelnek a 3x3-as resztablaban. Ezt a reszt lehetne szebben is csinalni, azonban azt hiszem, hogy igy sokkal konnyebben atlathato
 		case 0: case 1: case 2:
 		case 9: case 10: case 11:
 		case 18: case 19: case 20:
@@ -242,15 +229,23 @@ public class Tabla {
 			break;
 		}
 
-		int szam = 0;
+		int szam = 0;													///Ez a resz pedig megvizsgalja, hogy maradt-e olyan eleme a kilences tombnek amit meg be lehet irni
 		for (int j = 0; j < 9; j++) {
-			if (kilenc[j] == -1)
+			if (kilenc[j] != -1)
 				szam++;
 		}
-		if (szam < 6)
+		if (szam == 0)													///Ha nem maradt a vizsgalt tombben ertek, akkor HAMIS ertekkel terunk vissza
 			return false;
+		
+		Random rand = new Random();										///Valasztunk egy random erteket 1..9 intervallumon
+		int value = rand.nextInt(9);
 
-		return true;
+		while (kilenc[value] == -1) {									///Ha ott -1 van, akkor ujat valasztunk
+		value = rand.nextInt(9);
+		}
+		puzzle[i] = kilenc[value];										///A vizsgalt helyre beirjuk a leheteseges ertekek kozul veletlenszeruen valasztott erteket
+
+		return true;													///Es IGAZ ertekkel visszaterunk
 	}
 
 	public boolean checkConstraints(int[] puzzle) {
