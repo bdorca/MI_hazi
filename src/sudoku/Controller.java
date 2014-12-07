@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -99,23 +100,33 @@ public class Controller {
 	 */
 	public boolean solveTabla() {
 		boolean megoldva = false;
+		flag:
 		while (!megoldva) {
 			t.load81();
 			kitakarTabla();
 			System.out.println("A megoldas:");
-
-			while (!(t.solvePuzzle(t.puzzle, 0))) {
-				t.szam_2 = 0;
-				t.load81();
-			}
-
-			megoldva = true;
-
-			for (int i = 0; i < 80; i++) {
-				if (t.puzzle[i] != t.nyolcvanegy[i]) {
-					megoldva = false;
+			
+			for (int i = 0; i < 20; i++) {
+				t.puzzle = t.kitakart.clone();
+				
+				for(int j = 0; j < 100; j++){
+					if (t.solvePuzzle(t.puzzle, 0)) {
+						j = 100;
+					} else {
+						t.szam_2 = 0;
+						t.puzzle = t.kitakart.clone();
+					}
 				}
+
+				if (!(Arrays.equals(t.nyolcvanegy, t.puzzle))) {
+					for(int j = 0; j < 10; j++){
+						System.out.println("GEBAAAAAAAAAAAAAAAAAAAAASZ");
+					}
+					continue flag;
+				}
+				
 			}
+			megoldva = true;
 		}
 		return megoldva;
 	}

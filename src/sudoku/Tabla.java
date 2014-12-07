@@ -69,7 +69,7 @@ public class Tabla {
 	public boolean solvePuzzle(int[] puzzle, int i) {					///Megprobal megoldani egy szabalyos tablat kitakart elemekkel
 		szam_2++;
 		
-		if(szam_2 > 1000){												///Ha ezer iteracional tartunk mar, akkor ujrafuttatjuk az egeszet az eredeti ertekekkel
+		if(szam_2 > 100){												///Ha szaz iteracional tartunk mar, akkor ujrafuttatjuk az egeszet az eredeti ertekekkel
 			return false;
 		}
 		boolean check = true;
