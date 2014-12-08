@@ -420,15 +420,15 @@ public class SFrame extends JFrame {
 					.xAxisTitle("dátum").yAxisTitle("db").build();
 
 			series = chart2.addSeries("összes próbálkozás", dateList, tippList);
-			series.setFillColor(new Color(0, 0, 255, 128));
-			series.setLineColor(new Color(0, 0, 255, 128));
-			series.setMarkerColor(new Color(0, 0, 255, 128));
+			series.setFillColor(new Color(0, 255, 255, 128));
+			series.setLineColor(new Color(0, 255, 255, 128));
+			series.setMarkerColor(new Color(0, 255, 255, 128));
 
 			series = chart2.addSeries("rossz próbálkozás", dateList,
 					rosszTippList);
-			series.setFillColor(new Color(255, 0, 0, 128));
-			series.setLineColor(new Color(255, 0, 0, 128));
-			series.setMarkerColor(new Color(255, 0, 0, 128));
+			series.setFillColor(new Color(255, 0, 255, 128));
+			series.setLineColor(new Color(255, 0, 255, 128));
+			series.setMarkerColor(new Color(255, 0, 255, 128));
 
 			chart2.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
 			chart2.getStyleManager().setAxisTitlesVisible(true);
@@ -502,11 +502,9 @@ public class SFrame extends JFrame {
 						return;
 					}
 				}
-
-				controller.getT().kitakart[x * 9 + y] = controller.getT()
-						.getINT(betu.charAt(0));
-				if (controller.getT().kitakart[x * 9 + y] == -1
-						|| controller.getT().kitakart[x * 9 + y] != controller
+				int beirando=controller.getT().getINT(betu.charAt(0));
+				if (beirando == -1
+						|| beirando != controller
 								.getT().nyolcvanegy[x * 9 + y]) {
 					rosszTipp++;
 					if (helpmode) {
@@ -514,8 +512,17 @@ public class SFrame extends JFrame {
 					}
 				} else {
 					controller.getT().kitakartNum--;
+					//controller.getT().kitakart[x * 9 + y] = beirando;
 					if (helpmode) {
 						f[x][y].setBackground(Color.GREEN);
+					}
+				}
+				if(controller.getT().getINT(betu.charAt(0)) != -1){
+					if(!controller.getT().checkBlack(controller.getT().kitakart, x*9+y, controller.getT().getINT(betu.charAt(0)))){
+						f[x][y].setBackground(Color.MAGENTA);
+						time+=60;
+					}else{
+						controller.getT().kitakart[x * 9 + y] = beirando;
 					}
 				}
 				System.out.println(controller.getT().kitakartNum);
@@ -555,9 +562,7 @@ public class SFrame extends JFrame {
 					controller.getT().kitakartNum++;
 				}
 				controller.getT().kitakart[value] = 0;
-				if (helpmode) {
 					f[x][y].setBackground(Color.WHITE);
-				}
 			}
 		}
 
