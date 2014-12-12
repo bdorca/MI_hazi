@@ -29,8 +29,8 @@ public class Controller {
 	public void initCharset() {
 		FileInputStream fr;
 		try {
-			 fr = new FileInputStream("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\9char.txt");
-			//fr = new FileInputStream("9char.txt");
+//			 fr = new FileInputStream("C:\\Users\\Legoo\\Desktop\\félév#5\\MI\\sudoku\\MI_hazi\\9char.txt");
+			fr = new FileInputStream("9char.txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fr,
 					"UTF-8"));
 			Random rand = new Random();
