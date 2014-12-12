@@ -61,7 +61,7 @@ public class SFrame extends JFrame {
 	private JTextFieldLimit f[][] = new JTextFieldLimit[9][9]; // /< a 81 mezo
 	private JPanel p[][] = new JPanel[3][3]; // /< 9 panel a 3x3-as tabla
 												// reszere
-	private Controller controller; // /< a tablakat kezelo
+	private Controller controller; // /< a tablakat kezelo objektum
 	private boolean helpmode = false; // /< a segito mod kapcsoloja
 	private JLabel lblTime; // /< a stopper cimkeje
 	private Timer timer; // /< timer az eltelt ido szamolasahoz
